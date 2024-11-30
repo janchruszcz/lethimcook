@@ -1,0 +1,62 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    /* Color palette: 264653, 2A9D8F, E9C46A, F4A261, E76F51 */
+    --color-dark: 38 70 83;
+    --color-teal: 42 157 143;
+    --color-yellow: 233 196 106;
+    --color-orange: 244 162 97;
+    --color-coral: 231 111 81;
+    
+    /* Main theme colors */
+    --primary: var(--color-yellow);
+    --primary-light: 244 215 137;
+    --primary-dark: 212 176 91;
+    --secondary: var(--color-teal);
+    --secondary-light: 52 197 181;
+    --secondary-dark: 35 124 114;
+  }
+
+  body {
+    @apply bg-gradient-to-br from-dark/5 via-transparent to-teal/5;
+  }
+}
+
+@layer utilities {
+  .animate-fade-in {
+    animation: fadeIn 0.5s ease-in-out;
+  }
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: rgb(var(--color-teal) / 0.3);
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: rgb(var(--color-teal) / 0.5);
+}
