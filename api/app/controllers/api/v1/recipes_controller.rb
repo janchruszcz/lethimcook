@@ -2,17 +2,11 @@ module Api
   module V1
     class RecipesController < ApplicationController
       def index
-        @recipes = Recipe.all
-        
-        if params[:ingredients].present?
+        @recipes = Recipe.includes(:ingredients)
+
+        @recipes = if params[:ingredients].present?
           ingredient_names = params[:ingredients].split(',').map(&:strip)
-          @recipes = Recipe.joins(:ingredients)
-                          .where(ingredients: { name: ingredient_names })
-                          .group('recipes.id')
-                          .having('COUNT(DISTINCT ingredients.id) >= ?', ingredient_names.size)
-                          .select('recipes.*')
-        else
-          @recipes = Recipe.includes(:ingredients)
+          @recipes.references(:ingredients).where(ingredients: { name: ingredient_names })
         end
 
         if params[:cuisine].present?
@@ -23,7 +17,10 @@ module Api
           @recipes = @recipes.where(category: params[:category])
         end
         
-        render json: @recipes
+        render json: Panko::ArraySerializer.new(
+          @recipes,
+          each_serializer: RecipeSerializer,
+        ).to_json
       end
 
       def show
