@@ -26,6 +26,9 @@ gem "rack-cors"
 # Use Panko Serializer for JSON serialization
 gem 'panko_serializer', github: 'yosiat/panko_serializer', branch: 'master'
 
+# Use Devise for authentication
+gem 'devise'
+
 group :development, :test do
   # See https://guides.rubyonrails.org/debugging_rails_applications.html#debugging-with-the-debug-gem
   gem "debug", platforms: %i[ mri windows ], require: "debug/prelude"
