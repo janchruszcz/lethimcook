@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Plus, X, Search } from 'lucide-react';
 import { IngredientSuggestions } from './IngredientSuggestions';
+import { SearchBar } from './search/SearchBar';
 
 interface IngredientInputProps {
   onIngredientsChange: (ingredients: string[]) => void;
@@ -47,6 +48,8 @@ export function IngredientInput({ onIngredientsChange }: IngredientInputProps) {
           <Plus size={20} />
         </button>
       </div>
+
+      <SearchBar onSelect={addIngredient} />
 
       {ingredients.length > 0 && (
         <div className="flex flex-wrap gap-2">

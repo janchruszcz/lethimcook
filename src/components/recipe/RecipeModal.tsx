@@ -65,15 +65,15 @@ export function RecipeModal({ recipe, onClose, onFavoriteToggle, isFavorited }: 
 
           <div className="mb-6">
             <h3 className="text-lg font-semibold mb-3">Ingredients</h3>
-            {recipe.ingredients?.length > 0 ? (
+            {recipe.ingredient_entries?.length > 0 ? (
               <div className="grid grid-cols-2 gap-2">
-                {recipe.ingredients.map((ingredient) => (
+                {recipe.ingredient_entries.map((ingredient) => (
                   <div
                     key={ingredient.id}
-                    className="flex items-center gap-2 text-gray-700"
+                    className="flex items-center gap-2 text-gray-700 text-sm"
                   >
                     <span className="w-2 h-2 bg-secondary rounded-full" />
-                    {ingredient.name}
+                    {ingredient}
                   </div>
                 ))}
               </div>

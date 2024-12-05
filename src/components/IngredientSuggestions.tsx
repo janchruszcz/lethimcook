@@ -1,55 +1,85 @@
 import React from 'react';
 import {
-  Carrot,
-  Coffee,
-  Egg,
-  Fish,
   Beef,
-  Wheat,
+  Carrot,
   Apple,
+  Wheat,
   Milk,
+  Leaf,
+  Nut,
   Cookie,
   Sandwich,
-  Soup,
-  Cherry,
-  Wine,
-  IceCream2 as IceCream,
-  Banana,
-  Salad,
-  Pizza as CheeseIcon
+  Droplet,
 } from 'lucide-react';
 import clsx from 'clsx';
 
 const INGREDIENT_CATEGORIES = [
   {
-    icon: Salad,
-    name: 'Vegetables',
-    items: ['lettuce', 'spinach', 'kale', 'arugula', 'cabbage']
+    icon: Beef,
+    name: 'Proteins',
+    items: ['chicken', 'beef', 'pork', 'lamb', 'turkey', 'bacon', 'ham', 'duck', 'quail',
+           'shrimp', 'salmon', 'tuna', 'cod', 'tilapia', 'halibut', 'sea bass', 'trout',
+           'mussels', 'clams', 'oysters', 'scallops', 'crab', 'lobster', 'octopus', 'squid',
+           'tofu', 'tempeh', 'eggs']
   },
   {
     icon: Carrot,
-    name: 'Produce',
-    items: ['tomatoes', 'carrot', 'potato', 'onion', 'garlic', 'cucumber', 'bell pepper']
+    name: 'Vegetables',
+    items: ['garlic', 'onion', 'tomato', 'carrot', 'celery', 'potato', 'spinach', 'kale',
+           'broccoli', 'cauliflower', 'mushroom', 'zucchini', 'bell pepper', 'cucumber',
+           'lettuce', 'asparagus', 'brussels sprouts', 'cabbage', 'corn', 'sweet potato',
+           'peas', 'green beans', 'artichoke', 'radish', 'turnip', 'beet', 'squash', 'pumpkin']
   },
   {
-    icon: Beef,
-    name: 'Meat',
-    items: ['chicken', 'beef', 'pork', 'bacon', 'turkey']
+    icon: Apple,
+    name: 'Fruits',
+    items: ['avocado', 'apple', 'banana', 'strawberry', 'blueberry', 'raspberry', 'blackberry', 'orange',
+           'grapefruit', 'pineapple', 'mango', 'papaya', 'coconut', 'lemon', 'lime',
+           'dates', 'raisins', 'cranberry', 'fig', 'prune']
   },
   {
-    icon: Fish,
-    name: 'Seafood',
-    items: ['salmon', 'tuna', 'shrimp', 'cod', 'tilapia']
+    icon: Wheat,
+    name: 'Grains and Pasta',
+    items: ['pasta', 'rice', 'quinoa', 'couscous', 'barley', 'oats', 'millet', 'buckwheat',
+           'amaranth', 'sorghum', 'wild rice', 'jasmine rice', 'basmati rice']
   },
   {
     icon: Milk,
-    name: 'Dairy',
-    items: ['milk', 'cream', 'yogurt', 'butter']
+    name: 'Dairy and Alternatives',
+    items: ['butter', 'cream', 'milk', 'yogurt', 'sour cream', 'cream cheese',
+           'feta', 'mozzarella', 'parmesan', 'cheddar', 'gouda', 'blue cheese', 'ricotta']
   },
   {
-    icon: CheeseIcon,
-    name: 'Cheese',
-    items: ['cheddar', 'mozzarella', 'parmesan', 'feta']
+    icon: Leaf,
+    name: 'Herbs and Spices',
+    items: ['salt', 'pepper', 'basil', 'oregano', 'thyme', 'rosemary', 'parsley', 'cilantro',
+           'bay leaf', 'sage', 'mint', 'dill', 'chives', 'paprika', 'cayenne', 'chili powder',
+           'cinnamon', 'nutmeg', 'clove', 'ginger', 'turmeric', 'curry', 'cumin', 'coriander']
+  },
+  {
+    icon: Nut,
+    name: 'Nuts and Seeds',
+    items: ['almond', 'walnut', 'pecan', 'cashew', 'peanut', 'hazelnut', 'pistachio',
+           'chia seeds', 'flax seeds', 'pumpkin seeds', 'sunflower seeds', 'sesame seeds',
+           'pine nuts', 'macadamia', 'brazil nuts']
+  },
+  {
+    icon: Cookie,
+    name: 'Baking and Sweeteners',
+    items: ['flour', 'sugar', 'brown sugar', 'honey', 'maple syrup', 'molasses', 'corn syrup',
+           'baking powder', 'baking soda', 'yeast', 'cornstarch', 'chocolate', 'cocoa powder']
+  },
+  {
+    icon: Sandwich,
+    name: 'Processed and Prepared',
+    items: ['bread crumbs', 'tortilla', 'naan', 'pita', 'baguette', 'pancetta', 'prosciutto',
+           'salami', 'pepperoni', 'chorizo', 'sausage', 'hot dog', 'anchovy', 'sardine']
+  },
+  {
+    icon: Droplet,
+    name: 'Liquids and Fats',
+    items: ['chicken broth', 'beef broth', 'vegetable broth', 'ghee', 'margarine', 'shortening', 
+            'lard', 'wine', 'red wine', 'white wine', 'rice wine', 'sake']
   }
 ];
 
