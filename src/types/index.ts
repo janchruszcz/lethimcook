@@ -1,3 +1,10 @@
+export interface User {
+  id: number;
+  email: string;
+  username: string;
+  created_at: string;
+}
+
 export interface Ingredient {
   id: number;
   name: string;
@@ -15,6 +22,7 @@ export interface Recipe {
   category?: string;
   author?: string;
   ingredients: Ingredient[];
+  userId: number;
   createdAt: string;
   updatedAt: string;
 }
