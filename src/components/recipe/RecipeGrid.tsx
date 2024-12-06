@@ -2,25 +2,31 @@ import React from 'react';
 import { Recipe } from '../../types';
 import { RecipeCard } from './RecipeCard';
 import { EmptyState } from '../ui/EmptyState';
-import { LoadingSkeleton } from './LoadingSkeleton';
+import { LoadingSpinner } from '../ui/LoadingSpinner';
 
 interface RecipeGridProps {
   recipes: Recipe[];
   isLoading: boolean;
+  selectedIngredientsCount: number;
   onFavoriteToggle?: (recipeId: number, isFavorited: boolean) => void;
 }
 
-export function RecipeGrid({ recipes, isLoading, onFavoriteToggle }: RecipeGridProps) {
+export function RecipeGrid({ 
+  recipes, 
+  isLoading, 
+  selectedIngredientsCount,
+  onFavoriteToggle 
+}: RecipeGridProps) {
   if (isLoading) {
-    return <LoadingSkeleton />;
+    return <LoadingSpinner />;
   }
 
   if (recipes.length === 0) {
-    return <EmptyState />;
+    return <EmptyState selectedIngredientsCount={selectedIngredientsCount} />;
   }
 
   return (
-    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 relative z-0">
       {recipes.map((recipe) => (
         <RecipeCard
           key={recipe.id}
