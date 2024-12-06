@@ -35,15 +35,37 @@ A meme-inspired, modern recipe finder application that helps you discover recipe
 ## 🏗 Project Structure
 
 .
-├── api/ # Rails API backend
-│ ├── app/ # Rails application code
-│ ├── config/ # Rails configuration
-│ └── db/ # Database migrations and schema
-└─�� src/ # React frontend
-├── api/ # API client and services
-├── components/ # React components
-├── contexts/ # React context providers
-└── types/ # TypeScript type definitions
+├── api/                   # Rails API backend
+│   ├── app/               # Rails application code
+│   ├── config/            # Rails configuration
+│   └── db/                # Database migrations and schema
+└── src/                   # React frontend
+    ├── api/               # API client and services
+    ├── components/        # React components
+    ├── contexts/          # React context providers
+    └── types/             # TypeScript type definitions
+
+## 👨‍🍳 User Stories
+
+### Recipe Discovery
+- As a home cook, I want to input ingredients I have on hand, so I can find recipes that match my available ingredients
+- As a busy parent, I want to see recipe cooking times upfront, so I can choose recipes that fit my schedule
+- As a food enthusiast, I want to filter recipes by cuisine type, so I can explore different cultural dishes
+
+### Recipe Management
+- As a user, I want to save recipes to my favorites, so I can quickly access them later
+- As a beginner cook, I want to see detailed cooking instructions, so I can follow recipes accurately
+- As a mobile user, I want to access recipes on my phone while cooking, so I can follow along step by step
+
+### User Experience
+- As a user, I want to create an account, so I can personalize my recipe experience
+- As a returning user, I want to log in securely, so I can access my saved recipes
+- As a visual learner, I want to see recipe photos, so I can understand what I'm making
+- As a user with dietary restrictions, I want to filter recipes by category, so I can find suitable options
+
+### Social Features
+- As a user, I want to see recipe ratings, so I can choose well-tested recipes
+- As a community member, I want to see who authored the recipe, so I can find more recipes from creators I trust
 
 ## 🚦 Getting Started
 
