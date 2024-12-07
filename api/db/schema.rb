@@ -10,12 +10,23 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2024_12_02_223922) do
+ActiveRecord::Schema[8.0].define(version: 2024_12_07_115417) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
+  create_table "favorites", force: :cascade do |t|
+    t.bigint "user_id", null: false
+    t.bigint "recipe_id", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["recipe_id"], name: "index_favorites_on_recipe_id"
+    t.index ["user_id", "recipe_id"], name: "index_favorites_on_user_id_and_recipe_id", unique: true
+    t.index ["user_id"], name: "index_favorites_on_user_id"
+  end
+
   create_table "ingredients", force: :cascade do |t|
-    t.string "name"
+    t.string "name", null: false
+    t.string "category"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["name"], name: "index_ingredients_on_name", unique: true
@@ -34,7 +45,7 @@ ActiveRecord::Schema[8.0].define(version: 2024_12_02_223922) do
   create_table "recipes", force: :cascade do |t|
     t.string "title", null: false
     t.text "description"
-    t.text "instructions", default: [], array: true
+    t.text "ingredient_entries", default: [], array: true
     t.string "image_url"
     t.integer "prep_time"
     t.integer "cook_time"
@@ -46,6 +57,7 @@ ActiveRecord::Schema[8.0].define(version: 2024_12_02_223922) do
     t.datetime "updated_at", null: false
     t.index ["category"], name: "index_recipes_on_category"
     t.index ["cuisine"], name: "index_recipes_on_cuisine"
+    t.index ["ingredient_entries"], name: "index_recipes_on_ingredient_entries", using: :gin
     t.index ["title"], name: "index_recipes_on_title"
   end
 
@@ -61,6 +73,8 @@ ActiveRecord::Schema[8.0].define(version: 2024_12_02_223922) do
     t.index ["reset_password_token"], name: "index_users_on_reset_password_token", unique: true
   end
 
+  add_foreign_key "favorites", "recipes"
+  add_foreign_key "favorites", "users"
   add_foreign_key "recipe_ingredients", "ingredients"
   add_foreign_key "recipe_ingredients", "recipes"
 end
