@@ -34,6 +34,7 @@ export function Header({ onLoginClick, showFavorites, onFavoritesClick }: Header
             size="sm"
             onClick={onFavoritesClick}
             className="flex items-center gap-2 text-coral/70 hover:text-coral"
+            disabled={!isAuthenticated}
           >
             {showFavorites ? (
               <Search className="w-5 h-5" />
