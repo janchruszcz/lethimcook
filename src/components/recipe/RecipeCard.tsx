@@ -1,33 +1,46 @@
 import React, { useState } from 'react';
-import { Clock, Users, UtensilsCrossed } from 'lucide-react';
+import { Clock } from 'lucide-react';
 import { Recipe } from '../../types';
 import { Card, CardContent } from '../ui/Card';
 import { Badge } from '../ui/Badge';
 import { Button } from '../ui/Button';
+import { FavoriteButton } from '../FavoriteButton';
 import { RecipeModal } from './RecipeModal';
+import { toggleRecipeFavorite } from '../../api/favorites';
 
 interface RecipeCardProps {
   recipe: Recipe;
 }
 
 export function RecipeCard({ recipe }: RecipeCardProps) {
-  const [showInstructions, setShowInstructions] = useState(false);
-  const totalTime = (recipe.prepTime || 0) + (recipe.cookTime || 0);
+  const [showModal, setShowModal] = useState(false);
+  const [isFavorited, setIsFavorited] = useState(recipe.is_favorite || false);
+
+  const handleFavoriteToggle = async () => {
+    try {
+      await toggleRecipeFavorite(recipe.id, isFavorited);
+      setIsFavorited(!isFavorited);
+    } catch (error) {
+      console.error('Failed to toggle favorite:', error);
+    }
+  };
 
   return (
     <>
-      <Card className="group transform hover:-translate-y-1">
+      <Card className="group transform hover:-translate-y-1 transition-all duration-300">
         <div className="relative h-40">
           <img
             src={recipe.imageUrl}
             alt={recipe.title}
             className="w-full h-full object-cover rounded-t-xl"
           />
-          {recipe.ratings && (
-            <div className="absolute top-2 right-2 bg-yellow/90 text-dark font-medium px-2 py-1 rounded-full text-sm">
-              ★ {recipe.ratings.toFixed(1)}
-            </div>
-          )}
+          <div className="absolute top-2 right-2">
+            <FavoriteButton
+              isFavorited={isFavorited}
+              onToggle={handleFavoriteToggle}
+              className="bg-white/90 hover:bg-white"
+            />
+          </div>
         </div>
         
         <CardContent className="p-4">
@@ -35,53 +48,34 @@ export function RecipeCard({ recipe }: RecipeCardProps) {
             <h3 className="text-lg font-semibold text-primary group-hover:text-primary-light transition-colors line-clamp-1">
               {recipe.title}
             </h3>
-            {recipe.author && (
-              <span className="text-xs text-gray-500">by {recipe.author}</span>
-            )}
           </div>
 
-          {(recipe.cuisine || recipe.category) && (
-            <div className="flex gap-2 mb-3">
-              {recipe.cuisine && (
-                <Badge variant="secondary" className="text-xs">
-                  {recipe.cuisine}
-                </Badge>
-              )}
-              {recipe.category && (
-                <Badge variant="primary" className="text-xs">
-                  {recipe.category}
-                </Badge>
-              )}
-            </div>
-          )}
-          
           <div className="mb-3">
             <div className="flex flex-wrap gap-1.5">
-              {recipe.ingredients.slice(0, 3).map((ingredient) => (
+              {recipe.ingredient_entries.slice(0, 3).map((ingredient) => (
                 <Badge key={ingredient.id} variant="secondary" className="text-xs px-2 py-0.5">
-                  {ingredient.name}
+                  {ingredient}
                 </Badge>
               ))}
-              {recipe.ingredients.length > 3 && (
+              {recipe.ingredient_entries.length > 3 && (
                 <Badge variant="secondary" className="text-xs px-2 py-0.5">
-                  +{recipe.ingredients.length - 3} more
+                  +{recipe.ingredient_entries.length - 3} more
                 </Badge>
               )}
             </div>
           </div>
           
           <div className="flex items-center gap-4 text-xs text-gray-500">
-            {totalTime > 0 && (
+            {recipe.total_time > 0 && (
               <div className="flex items-center gap-1">
                 <Clock size={14} className="text-primary-light" />
-                <span>{totalTime}m</span>
+                <span>{recipe.total_time}m</span>
               </div>
             )}
             <Button
               variant="ghost"
               size="sm"
-              icon={UtensilsCrossed}
-              onClick={() => setShowInstructions(true)}
+              onClick={() => setShowModal(true)}
               className="ml-auto text-xs"
             >
               View Recipe
@@ -90,12 +84,12 @@ export function RecipeCard({ recipe }: RecipeCardProps) {
         </CardContent>
       </Card>
 
-      {showInstructions && (
-        <RecipeModal
-          recipe={recipe}
-          onClose={() => setShowInstructions(false)}
-        />
-      )}
+      <RecipeModal
+        recipe={{ ...recipe, is_favorite: isFavorited }}
+        isOpen={showModal}
+        onClose={() => setShowModal(false)}
+        onFavoriteToggle={handleFavoriteToggle}
+      />
     </>
   );
 }

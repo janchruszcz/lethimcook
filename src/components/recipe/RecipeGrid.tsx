@@ -19,7 +19,6 @@ export function RecipeGrid({
   pagination,
   isLoading, 
   selectedIngredientsCount,
-  onFavoriteToggle,
   onPageChange
 }: RecipeGridProps) {
   if (isLoading) {
@@ -37,7 +36,6 @@ export function RecipeGrid({
           <RecipeCard
             key={recipe.id}
             recipe={recipe}
-            onFavoriteToggle={onFavoriteToggle}
           />
         ))}
       </div>

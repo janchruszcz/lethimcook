@@ -1,6 +1,7 @@
 class Api::V1::RecipesController < ApplicationController
   def index
-    @recipes = Recipe.all
+    @recipes = Recipe.includes(:favorites)
+                     .where(favorites: { user_id: current_user&.id })
 
     if params[:ingredients].present?
       ingredient_names = params[:ingredients].split(',').map(&:strip)
@@ -14,12 +15,15 @@ class Api::V1::RecipesController < ApplicationController
       recipes: Panko::ArraySerializer.new(
         @recipes,
         each_serializer: RecipeSerializer,
+        context: {
+          current_user: current_user
+        }
       ),
       pagination: {
         page: pagy.page,
         pages: pagy.pages,
         count: pagy.count,
-        items: 9
+        items: pagy.limit
       }
     )
   end

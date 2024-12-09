@@ -1,16 +1,24 @@
 class RecipeSerializer < Panko::Serializer
-  attributes :id, :title, :description, :instructions, :image_url, 
-             :prep_time, :cook_time, :ratings, 
-             :cuisine, :category, :author, :total_time
+  attributes :id, :title, :description, :ingredient_entries, :instructions, :image_url, 
+             :prep_time, :cook_time, :total_time, :ratings, :ingredients,
+             :cuisine, :category, :author, :is_favorite
 
-  has_many :ingredients, serializer: IngredientSerializer
+  #has_many :ingredients, serializer: IngredientSerializer
 
-  def description
-    ""
+  def ingredients
+    []
+  end
+
+  def ingredient_entries
+    object.ingredient_entries.presence || []
   end
 
   def instructions
-    object.instructions.presence || {}
+    ['Cook', 'Eat', 'Refactor']
+  end
+
+  def description
+    ""
   end
 
   def prep_time
@@ -27,5 +35,10 @@ class RecipeSerializer < Panko::Serializer
 
   def cuisine
     object.cuisine.presence || ""
+  end
+
+  def is_favorite
+    return false unless context[:current_user]
+    object.favorites.any? { |favorite| favorite.user_id == context[:current_user].id }
   end
 end
