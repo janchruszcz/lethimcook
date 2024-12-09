@@ -22,11 +22,18 @@ export default {
       },
       animation: {
         'fade-in': 'fadeIn 0.5s ease-in-out',
+        'ping-slow': 'ping 2s cubic-bezier(0, 0, 0.2, 1) infinite',
       },
       keyframes: {
         fadeIn: {
           '0%': { opacity: '0', transform: 'translateY(10px)' },
           '100%': { opacity: '1', transform: 'translateY(0)' },
+        },
+        ping: {
+          '75%, 100%': {
+            transform: 'scale(1.5)',
+            opacity: '0',
+          },
         },
       },
     },
