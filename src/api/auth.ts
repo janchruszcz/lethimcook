@@ -16,9 +16,7 @@ export async function signup(email: string, password: string): Promise<User> {
 }
 
 export async function logout(): Promise<void> {
-  await api.delete('/logout', {
-    withCredentials: true
-  });
+  await api.delete('/logout');
 }
 
 export async function getCurrentUser(): Promise<User> {
