@@ -4,7 +4,8 @@ import { api } from './client';
 export const searchRecipes = async (filters: RecipeFilters): Promise<Recipe[]> => {
   const { data } = await api.get<Recipe[]>('api/v1/recipes', {
     params: {
-      ingredients: filters.ingredients?.join(',')
+      ingredients: filters.ingredients?.join(','),
+      page: filters.page
     },
   });
   return data;

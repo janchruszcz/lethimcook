@@ -1,21 +1,26 @@
 import React from 'react';
-import { Recipe } from '../../types';
+import { Recipe, PaginationMetadata } from '../../types';
 import { RecipeCard } from './RecipeCard';
 import { EmptyState } from '../ui/EmptyState';
 import { LoadingSpinner } from '../ui/LoadingSpinner';
+import { Pagination } from '../ui/Pagination';
 
 interface RecipeGridProps {
   recipes: Recipe[];
+  pagination?: PaginationMetadata;
   isLoading: boolean;
   selectedIngredientsCount: number;
   onFavoriteToggle?: (recipeId: number, isFavorited: boolean) => void;
+  onPageChange: (page: number) => void;
 }
 
 export function RecipeGrid({ 
   recipes, 
+  pagination,
   isLoading, 
   selectedIngredientsCount,
-  onFavoriteToggle 
+  onFavoriteToggle,
+  onPageChange
 }: RecipeGridProps) {
   if (isLoading) {
     return <LoadingSpinner />;
@@ -26,14 +31,24 @@ export function RecipeGrid({
   }
 
   return (
-    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 relative z-0">
-      {recipes.map((recipe) => (
-        <RecipeCard
-          key={recipe.id}
-          recipe={recipe}
-          onFavoriteToggle={onFavoriteToggle}
+    <div className="space-y-8">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        {recipes.map((recipe) => (
+          <RecipeCard
+            key={recipe.id}
+            recipe={recipe}
+            onFavoriteToggle={onFavoriteToggle}
+          />
+        ))}
+      </div>
+
+      {pagination && pagination.pages > 1 && (
+        <Pagination
+          currentPage={pagination.page}
+          totalPages={pagination.pages}
+          onPageChange={onPageChange}
         />
-      ))}
+      )}
     </div>
   );
 }

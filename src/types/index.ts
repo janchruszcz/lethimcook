@@ -29,6 +29,14 @@ export interface Recipe {
 
 export interface RecipeFilters {
   ingredients?: string[];
+  page?: number;
   cuisine?: string;
   category?: string;
+}
+
+export interface PaginationMetadata {
+  page: number;
+  pages: number;
+  count: number;
+  items: number;
 }
