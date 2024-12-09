@@ -1,12 +1,26 @@
 class Recipe < ApplicationRecord
+  # belongs_to :user
   has_many :recipe_ingredients, dependent: :destroy
   has_many :ingredients, through: :recipe_ingredients
-  
-  validates :title, presence: true
-  # validates :instructions, presence: true
-  # validates :cook_time, numericality: { greater_than: 0 }, allow_nil: true
-  # validates :prep_time, numericality: { greater_than: 0 }, allow_nil: true
-  validates :ratings, numericality: { greater_than: 0, less_than_or_equal_to: 5 }, allow_nil: true
+  has_many :favorites
+  has_many :favorited_by, through: :favorites, source: :user
+
+ # Finds recipes containing at least these ingredients
+ scope :with_ingredients, -> (ingredients) {
+   where(
+     ingredients.map { |ingredient|
+       "EXISTS (SELECT 1 FROM unnest(ingredient_entries) entry WHERE entry ILIKE ?)"
+     }.join(' AND '),
+     *ingredients.map { |i| "%#{i}%" }
+   )
+ }
+
+ # Finds recipes containing exactly these ingredients - no more, no less
+ scope :with_exact_ingredients, -> (ingredients) {
+   with_ingredients(ingredients)
+     .where("array_length(ingredient_entries, 1) = ?", ingredients.length)
+ }
+
 
   def total_time
     (prep_time || 0) + (cook_time || 0)
