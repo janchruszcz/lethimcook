@@ -2,6 +2,7 @@ require "active_support/core_ext/integer/time"
 
 Rails.application.configure do
   # Settings specified here will take precedence over those in config/application.rb.
+  config.secret_key_base = ENV['SECRET_KEY_BASE']
 
   # Code is not reloaded between requests.
   config.enable_reloading = false
@@ -61,4 +62,6 @@ Rails.application.configure do
   #
   # Skip DNS rebinding protection for the default health check endpoint.
   # config.host_authorization = { exclude: ->(request) { request.path == "/up" } }
+  
+  config.action_mailer.default_url_options = { host: 'lethimcook-api.fly.dev', protocol: 'https' }
 end
