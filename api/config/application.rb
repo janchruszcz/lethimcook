@@ -15,6 +15,8 @@ require "action_view/railtie"
 # require "rails/test_unit/railtie"
 
 require 'devise'
+require 'devise/mailer'
+
 # Require the gems listed in Gemfile, including any gems
 # you've limited to :test, :development, or :production.
 Bundler.require(*Rails.groups)
