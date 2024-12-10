@@ -23,6 +23,9 @@ api/.env*
 api/config/master.key
 api/config/credentials/*.key
 
+# Frontend
+frontend/.env*
+
 # Logs
 frontend/logs
 frontend/*.log
