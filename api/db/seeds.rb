@@ -98,13 +98,13 @@ recipes_data = JSON.parse(recipes_json, symbolize_names: true).map do |recipe|
   }
 end
 
-puts "Creating recipes and ingredients..."
+puts "Creating recipes"
 recipes_data.each do |recipe_data|
   recipe = Recipe.create!(recipe_data)
-  recipe_data[:ingredient_entries].each do |ingredient_entry|
-    ingredient = Ingredient.find_by(name: ingredient_entry[:name])
-    recipe.ingredients << ingredient
-  end
+  #recipe_data[:ingredient_entries].each do |ingredient_entry|
+  #  ingredient = Ingredient.find_by(name: ingredient_entry[:name])
+  #  recipe.ingredients << ingredient
+  #end
 end
 
 puts "Seed completed successfully!"
