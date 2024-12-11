@@ -1,7 +1,6 @@
 class Api::V1::RecipesController < ApplicationController
   def index
     @recipes = Recipe.includes(:favorites)
-                     .where(favorites: { user_id: current_user&.id })
 
     if params[:ingredients].present?
       ingredient_names = params[:ingredients].split(',').map(&:strip)
