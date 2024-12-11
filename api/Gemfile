@@ -29,6 +29,9 @@ gem 'panko_serializer', github: 'yosiat/panko_serializer', branch: 'master'
 # Use Devise for authentication
 gem 'devise'
 
+# Use pg_search for full text search
+gem 'pg_search'
+
 # Use Pagy for pagination
 gem 'pagy'
 

@@ -6,7 +6,7 @@ class Api::V1::IngredientsController < ApplicationController
 
   def search
     query = params[:q]&.downcase
-    @ingredients = Ingredient.where('name ILIKE ?', "%#{query}%")
+    @ingredients = Ingredient.search_by_name(query)
     
     render json: @ingredients
   end
