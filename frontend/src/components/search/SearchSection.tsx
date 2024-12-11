@@ -7,9 +7,14 @@ import { ExactMatchToggle } from './ExactMatchToggle';
 interface SearchSectionProps {
   onIngredientsChange: (ingredients: string[]) => void;
   onExactMatchChange: (exactMatch: boolean) => void;
+  selectedIngredients: string[];
 }
 
-export function SearchSection({ onIngredientsChange, onExactMatchChange }: SearchSectionProps) {
+export function SearchSection({ 
+  onIngredientsChange, 
+  onExactMatchChange,
+  selectedIngredients 
+}: SearchSectionProps) {
   const [exactMatch, setExactMatch] = useState(false);
 
   const handleExactMatchChange = (checked: boolean) => {
@@ -29,7 +34,10 @@ export function SearchSection({ onIngredientsChange, onExactMatchChange }: Searc
             <ExactMatchToggle checked={exactMatch} onChange={handleExactMatchChange} />
           </div>
         </div>
-        <SearchBar onIngredientsChange={onIngredientsChange} />
+        <SearchBar 
+          onIngredientsChange={onIngredientsChange}
+          selectedIngredients={selectedIngredients}
+        />
       </div>
     </Card>
   );

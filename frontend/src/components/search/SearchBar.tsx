@@ -8,12 +8,12 @@ import { useOnClickOutside } from '../../hooks/useOnClickOutside';
 
 interface SearchBarProps {
   onIngredientsChange: (ingredients: string[]) => void;
+  selectedIngredients: string[];
 }
 
-export function SearchBar({ onIngredientsChange }: SearchBarProps) {
+export function SearchBar({ onIngredientsChange, selectedIngredients }: SearchBarProps) {
   const [searchTerm, setSearchTerm] = useState('');
   const [isOpen, setIsOpen] = useState(false);
-  const [selectedIngredients, setSelectedIngredients] = useState<string[]>([]);
   const debouncedSearch = useDebounce(searchTerm, 300);
   const inputRef = useRef<HTMLInputElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
@@ -33,7 +33,6 @@ export function SearchBar({ onIngredientsChange }: SearchBarProps) {
     const ingredientName = typeof ingredient === 'string' ? ingredient : ingredient.name;
     if (!selectedIngredients.includes(ingredientName)) {
       const newIngredients = [...selectedIngredients, ingredientName];
-      setSelectedIngredients(newIngredients);
       onIngredientsChange(newIngredients);
     }
     setSearchTerm('');
@@ -43,7 +42,6 @@ export function SearchBar({ onIngredientsChange }: SearchBarProps) {
 
   const removeIngredient = (index: number) => {
     const newIngredients = selectedIngredients.filter((_, i) => i !== index);
-    setSelectedIngredients(newIngredients);
     onIngredientsChange(newIngredients);
   };
 

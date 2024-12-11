@@ -9,11 +9,11 @@ import { RecipeGrid } from './components/recipe/RecipeGrid';
 import { searchRecipes } from './api/recipes';
 import { getFavoriteRecipes } from './api/favorites';
 import { RecipeFilters } from './types';
-import { ModalProvider } from './contexts/ModalContext';
 
 export default function App() {
   const [showAuthModal, setShowAuthModal] = useState(false);
   const [showFavorites, setShowFavorites] = useState(false);
+  const [ingredients, setIngredients] = useState<string[]>([]);
   const [filters, setFilters] = useState<RecipeFilters>({
     ingredients: [],
     page: 1,
@@ -36,9 +36,11 @@ export default function App() {
     }
   );
 
-  const filteredRecipes = showFavorites ? favoriteData?.recipes || [] : data?.recipes || [];
+  const recipes = showFavorites ? favoriteData?.recipes || [] : data?.recipes || [];
+  const pagination = showFavorites ? favoriteData?.pagination : data?.pagination;
 
   const handleIngredientsChange = (ingredients: string[]) => {
+    setIngredients(ingredients);
     setFilters(prev => ({ ...prev, ingredients, page: 1 }));
   };
 
@@ -51,39 +53,41 @@ export default function App() {
   };
 
   return (
-    <ModalProvider>
-      <ToastProvider>
-        <AuthProvider>
-          <div className="min-h-screen bg-gradient-to-br from-dark/5 via-white to-teal/5">
-            <div className="max-w-7xl mx-auto px-4 py-8">
-              <Header 
-                onLoginClick={() => setShowAuthModal(true)}
-                showFavorites={showFavorites}
-                onFavoritesClick={() => setShowFavorites(!showFavorites)}
+    <ToastProvider>
+      <AuthProvider>
+        <div className="min-h-screen bg-gradient-to-br from-dark/5 via-white to-teal/5">
+          <div className="max-w-7xl mx-auto px-4 py-8">
+            <Header 
+              onLoginClick={() => setShowAuthModal(true)}
+              showFavorites={showFavorites}
+              onFavoritesClick={() => setShowFavorites(!showFavorites)}
+            />
+
+            
+            {!showFavorites && (
+              <SearchSection 
+                onIngredientsChange={handleIngredientsChange} 
+                onExactMatchChange={handleExactMatchChange}
+                selectedIngredients={ingredients}
               />
+            )}
 
-              
-              {!showFavorites && (
-                <SearchSection onIngredientsChange={handleIngredientsChange} onExactMatchChange={handleExactMatchChange} />
-              )}
-
-            <div className="mt-8">
-              <RecipeGrid
-                recipes={filteredRecipes}
-                pagination={data?.pagination || { page: 1, pages: 1 }}
-                isLoading={showFavorites ? isFavoritesLoading : isLoading}
-                selectedIngredientsCount={filters.ingredients?.length || 0}
-                onPageChange={handlePageChange}
-              />
-            </div>
-
-              {showAuthModal && (
-                <AuthModal onClose={() => setShowAuthModal(false)} />
-              )}
-            </div>
+          <div className="mt-8">
+            <RecipeGrid
+              recipes={recipes}
+              pagination={pagination}
+              isLoading={showFavorites ? isFavoritesLoading : isLoading}
+              selectedIngredientsCount={filters.ingredients?.length || 0}
+              onPageChange={handlePageChange}
+            />
           </div>
-        </AuthProvider>
-      </ToastProvider>
-    </ModalProvider>
+
+            {showAuthModal && (
+              <AuthModal onClose={() => setShowAuthModal(false)} />
+            )}
+          </div>
+        </div>
+      </AuthProvider>
+    </ToastProvider>
   );
 }
