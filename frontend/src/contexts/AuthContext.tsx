@@ -1,6 +1,7 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import { User } from '../types';
 import { login, signup, logout, getCurrentUser } from '../api/auth';
+import { useToast } from './ToastContext';
 
 interface AuthContextType {
   user: User | null;
@@ -16,6 +17,7 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined);
 export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
   const [isLoading, setIsLoading] = useState(true);
+  const { showToast } = useToast();
 
   useEffect(() => {
     const initAuth = async () => {
@@ -45,11 +47,13 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const handleLogin = async (email: string, password: string) => {
     const userData = await login(email, password);
     setUser(userData);
+    showToast('Successfully logged in!', 'success');
   };
 
   const handleSignup = async (email: string, password: string, passwordConfirmation: string) => {
     const userData = await signup(email, password, passwordConfirmation);
     setUser(userData);
+    showToast('Successfully signed up!', 'success');
   };
 
   const handleLogout = async () => {

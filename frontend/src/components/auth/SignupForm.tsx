@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useAuth } from '../../contexts/AuthContext';
 import { Button } from '../ui/Button';
+import { FormInput } from '../ui/FormInput';
 
 interface SignupFormProps {
   onSuccess: () => void;
@@ -12,67 +13,62 @@ export function SignupForm({ onSuccess }: SignupFormProps) {
   const [password, setPassword] = useState('');
   const [passwordConfirmation, setPasswordConfirmation] = useState('');
   const [error, setError] = useState('');
+  const [isLoading, setIsLoading] = useState(false);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    setError('');
+    setIsLoading(true);
+
     try {
       await signup(email, password, passwordConfirmation);
       onSuccess();
     } catch (err) {
       setError('Failed to create account');
+    } finally {
+      setIsLoading(false);
     }
   };
 
   return (
     <form onSubmit={handleSubmit} className="space-y-4">
-      <div>
-        <label htmlFor="email" className="block text-sm font-medium text-gray-700">
-          Email
-        </label>
-        <input
-          type="email"
-          id="email"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
-          className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-primary focus:ring focus:ring-primary/20"
-          required
-        />
-      </div>
+      <FormInput
+        type="email"
+        label="Email"
+        value={email}
+        onChange={setEmail}
+        placeholder="Enter your email"
+        required
+      />
 
-      <div>
-        <label htmlFor="password" className="block text-sm font-medium text-gray-700">
-          Password
-        </label>
-        <input
-          type="password"
-          id="password"
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-          className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-primary focus:ring focus:ring-primary/20"
-          required
-        />
-      </div>
+      <FormInput
+        type="password"
+        label="Password"
+        value={password}
+        onChange={setPassword}
+        placeholder="Choose a password"
+        required
+      />
 
-      <div>
-        <label htmlFor="passwordConfirmation" className="block text-sm font-medium text-gray-700">
-          Confirm Password
-        </label>
-        <input
-          type="password"
-          id="passwordConfirmation"
-          value={passwordConfirmation}
-          onChange={(e) => setPasswordConfirmation(e.target.value)}
-          className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-primary focus:ring focus:ring-primary/20"
-          required
-        />
-      </div>
+      <FormInput
+        type="password"
+        label="Password Confirmation"
+        value={passwordConfirmation}
+        onChange={setPasswordConfirmation}
+        placeholder="Confirm your password"
+        required
+      />
 
       {error && (
         <p className="text-red-500 text-sm">{error}</p>
       )}
 
-      <Button type="submit" className="w-full">
-        Sign Up
+      <Button
+        type="submit"
+        className="w-full"
+        loading={isLoading}
+      >
+        Create Account
       </Button>
     </form>
   );

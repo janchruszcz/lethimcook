@@ -84,12 +84,14 @@ export function RecipeCard({ recipe }: RecipeCardProps) {
         </CardContent>
       </Card>
 
-      <RecipeModal
-        recipe={{ ...recipe, is_favorite: isFavorited }}
-        isOpen={showModal}
-        onClose={() => setShowModal(false)}
-        onFavoriteToggle={handleFavoriteToggle}
-      />
+      {showModal && (
+        <RecipeModal
+          recipe={recipe}
+          onClose={() => setShowModal(false)}
+          onFavoriteToggle={handleFavoriteToggle}
+          isFavorited={isFavorited}
+        />
+      )}
     </>
   );
 }

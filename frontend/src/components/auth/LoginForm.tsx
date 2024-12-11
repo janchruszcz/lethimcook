@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useAuth } from '../../contexts/AuthContext';
 import { Button } from '../ui/Button';
+import { FormInput } from '../ui/FormInput';
 
 interface LoginFormProps {
   onSuccess: () => void;
@@ -11,52 +12,52 @@ export function LoginForm({ onSuccess }: LoginFormProps) {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
+  const [isLoading, setIsLoading] = useState(false);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    setError('');
+    setIsLoading(true);
+
     try {
       await login(email, password);
       onSuccess();
     } catch (err) {
       setError('Invalid email or password');
+    } finally {
+      setIsLoading(false);
     }
   };
 
   return (
     <form onSubmit={handleSubmit} className="space-y-4">
-      <div>
-        <label htmlFor="email" className="block text-sm font-medium text-gray-700">
-          Email
-        </label>
-        <input
-          type="email"
-          id="email"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
-          className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-primary focus:ring focus:ring-primary/20"
-          required
-        />
-      </div>
+      <FormInput
+        type="email"
+        label="Email"
+        value={email}
+        onChange={setEmail}
+        placeholder="Enter your email"
+        required
+      />
 
-      <div>
-        <label htmlFor="password" className="block text-sm font-medium text-gray-700">
-          Password
-        </label>
-        <input
-          type="password"
-          id="password"
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-          className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-primary focus:ring focus:ring-primary/20"
-          required
-        />
-      </div>
+      <FormInput
+        type="password"
+        label="Password"
+        value={password}
+        onChange={setPassword}
+        placeholder="Enter your password"
+        required
+      />
 
       {error && (
         <p className="text-red-500 text-sm">{error}</p>
       )}
 
-      <Button type="submit" className="w-full">
+      <Button
+        type="submit"
+        className="w-full"
+        loading={isLoading}
+      >
         Log In
       </Button>
     </form>

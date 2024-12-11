@@ -1,5 +1,5 @@
 import React from 'react';
-import { Clock } from 'lucide-react';
+import { Clock, X } from 'lucide-react';
 import { Recipe } from '../../types';
 import { Badge } from '../ui/Badge';
 import { FavoriteButton } from '../FavoriteButton';
@@ -15,21 +15,33 @@ interface RecipeModalProps {
 
 export function RecipeModal({ recipe, isOpen, onClose, onFavoriteToggle, isFavorited }: RecipeModalProps) {
   return (
-    <Modal isOpen={isOpen} onClose={onClose} title={recipe.title}>
+    <Modal onClose={onClose} size="lg">
       <div>
+        <div className="flex justify-between items-center absolute top-4 right-4 left-4 z-10">
+          <h2 className="text-2xl font-semibold text-white drop-shadow-md">
+            {recipe.title}
+          </h2>
+          <div className="flex gap-2">
+            <FavoriteButton
+              isFavorited={recipe.is_favorite}
+              onToggle={onFavoriteToggle}
+              className="bg-white/90 hover:bg-white"
+            />
+            <button
+              onClick={onClose}
+              className="p-2 bg-white/90 hover:bg-white rounded-full transition-colors"
+            >
+              <X size={20} className="text-gray-500" />
+            </button>
+          </div>
+        </div>
+
         <div className="relative h-64">
           <img
             src={recipe.imageUrl}
             alt={recipe.title}
             className="w-full h-full object-cover"
           />
-          <div className="absolute top-4 right-4">
-            <FavoriteButton
-              isFavorited={recipe.is_favorite}
-              onToggle={onFavoriteToggle}
-              className="bg-white/90 hover:bg-white"
-            />
-          </div>
         </div>
 
         <div className="p-6">
