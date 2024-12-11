@@ -32,6 +32,7 @@ export interface RecipeFilters {
   page?: number;
   cuisine?: string;
   category?: string;
+  exactMatch?: boolean;
 }
 
 export interface PaginationMetadata {

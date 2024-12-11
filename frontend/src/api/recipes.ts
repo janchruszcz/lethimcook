@@ -5,7 +5,8 @@ export const searchRecipes = async (filters: RecipeFilters): Promise<Recipe[]> =
   const { data } = await api.get<Recipe[]>('api/v1/recipes', {
     params: {
       ingredients: filters.ingredients?.join(','),
-      page: filters.page
+      page: filters.page,
+      exact: filters.exactMatch,
     },
   });
   return data;

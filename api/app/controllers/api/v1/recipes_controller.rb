@@ -4,7 +4,11 @@ class Api::V1::RecipesController < ApplicationController
 
     if params[:ingredients].present?
       ingredient_names = params[:ingredients].split(',').map(&:strip)
-      @recipes = @recipes.with_ingredients(ingredient_names)
+      if params[:exact] == 'true'
+        @recipes = @recipes.with_exact_ingredients(ingredient_names)
+      else
+        @recipes = @recipes.search_by_ingredient_entries(ingredient_names)
+      end
     end
     
     pagy, @recipes = pagy(@recipes)

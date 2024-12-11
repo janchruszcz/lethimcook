@@ -17,6 +17,7 @@ export default function App() {
   const [filters, setFilters] = useState<RecipeFilters>({
     ingredients: [],
     page: 1,
+    exactMatch: false,
   });
 
   const { data, isLoading } = useQuery(
@@ -45,6 +46,10 @@ export default function App() {
     setFilters(prev => ({ ...prev, page }));
   };
 
+  const handleExactMatchChange = (exactMatch: boolean) => {
+    setFilters(prev => ({ ...prev, exactMatch }));
+  };
+
   return (
     <ModalProvider>
       <ToastProvider>
@@ -59,7 +64,7 @@ export default function App() {
 
               
               {!showFavorites && (
-                <SearchSection onIngredientsChange={handleIngredientsChange} />
+                <SearchSection onIngredientsChange={handleIngredientsChange} onExactMatchChange={handleExactMatchChange} />
               )}
 
             <div className="mt-8">
