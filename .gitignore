@@ -1,5 +1,6 @@
 # Dependencies
 frontend/node_modules
+.vite
 
 # Production
 /build
