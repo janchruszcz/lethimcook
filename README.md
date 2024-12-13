@@ -10,7 +10,7 @@ A meme-inspired, modern recipe finder application that helps you discover recipe
 - Basic user authentication system
 - Responsive design with beautiful UI
 - RESTful API with Rails backend
-- PostgreSQL database for robust data storage
+- PostgreSQL database
 
 ## 🛠 Tech Stack
 
@@ -25,32 +25,31 @@ A meme-inspired, modern recipe finder application that helps you discover recipe
 
 ### Backend
 - Ruby on Rails 8.0
-- PostgreSQL
+- PostgreSQL with pg_search
 - Devise for authentication
 - Panko Serializer for JSON serialization
 - Rack CORS for handling Cross-Origin requests
-- Docker support for containerization
-- Kamal for deployment
 
 ## 🏗 Project Structure
 
+```
 .
 ├── api/                   # Rails API backend
 │   ├── app/               # Rails application code
 │   ├── config/            # Rails configuration
 │   └── db/                # Database migrations and schema
-└── src/                   # React frontend
+└── frontend/              # React frontend
     ├── api/               # API client and services
     ├── components/        # React components
     ├── contexts/          # React context providers
     └── types/             # TypeScript type definitions
+```
 
 ## 👨‍🍳 User Stories
 
 ### Recipe Discovery
 - As a home cook, I want to input ingredients I have on hand, so I can find recipes that match my available ingredients
 - As a busy parent, I want to see recipe cooking times upfront, so I can choose recipes that fit my schedule
-- As a food enthusiast, I want to filter recipes by cuisine type, so I can explore different cultural dishes
 
 ### Recipe Management
 - As a user, I want to save recipes to my favorites, so I can quickly access them later
@@ -59,9 +58,8 @@ A meme-inspired, modern recipe finder application that helps you discover recipe
 
 ### User Experience
 - As a user, I want to create an account, so I can personalize my recipe experience
-- As a returning user, I want to log in securely, so I can access my saved recipes
+- As a returning user, I want to log in securely, so I can access my favorite recipes
 - As a visual learner, I want to see recipe photos, so I can understand what I'm making
-- As a user with dietary restrictions, I want to filter recipes by category, so I can find suitable options
 
 ### Social Features
 - As a user, I want to see recipe ratings, so I can choose well-tested recipes
@@ -132,16 +130,19 @@ docker run -d -p 80:80 -e RAILS_MASTER_KEY=<your-master-key> --name lethimcook l
 
 - `GET /api/v1/recipes` - List recipes with optional ingredient filters
 - `GET /api/v1/recipes/:id` - Get detailed recipe information
-- `GET /api/v1/ingredients` - List all ingredients
 - `GET /api/v1/ingredients/search` - Search ingredients
+- `GET /api/v1/favorites` - List favorites
+- `POST /api/v1/favorites` - Create a favorite
+- `DELETE /api/v1/favorites/:id` - Delete a favorite
 
 ## 🔐 Environment Variables
 
 Create a `.env` file in the root directory with the following variables:
 
 ```env
+VITE_API_BASE_URL=<your-api-base-url>
 RAILS_MASTER_KEY=<your-master-key>
-API_DATABASE_PASSWORD=<your-database-password>
+DATABASE_URL=<your-database-url>
 ```
 
 ## 🧪 Testing
@@ -155,23 +156,3 @@ cd api
 rails test
 ```
 
-## 📦 Deployment
-
-The project uses Kamal for deployment. Configure your deployment settings in `api/config/deploy.yml` and use:
-
-```bash
-cd api
-bin/kamal deploy
-```
-
-## 🤝 Contributing
-
-1. Fork the repository
-2. Create your feature branch (`git checkout -b feature/amazing-feature`)
-3. Commit your changes (`git commit -m 'Add some amazing feature'`)
-4. Push to the branch (`git push origin feature/amazing-feature`)
-5. Open a Pull Request
-
-## 📄 License
-
-This project is licensed under the MIT License - see the LICENSE file for details.
