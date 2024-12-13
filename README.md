@@ -2,6 +2,8 @@
 
 A meme-inspired, modern recipe finder application that helps you discover recipes based on ingredients you have at home. Built with React, TypeScript, and Ruby on Rails.
 
+Note: This is a work in progress. Initial load - first query to API takes a while because of fly.io setup.
+
 ## 🚀 Features
 
 - Search recipes by ingredients with autocomplete
