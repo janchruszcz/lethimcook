@@ -1,4 +1,4 @@
-# Let Him Cook - Recipe Finder
+# 👨‍🍳 lethimcook.food - recipe finder
 
 A meme-inspired, modern recipe finder application that helps you discover recipes based on ingredients you have at home. Built with React, TypeScript, and Ruby on Rails.
 
