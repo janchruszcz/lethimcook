@@ -38,7 +38,7 @@ class Api::V1::RecipesController < ApplicationController
       json: Panko::Response.create do |r|
         {
           success: true,
-          recipe: r.serializer(@recipe, RecipeSerializer)
+          recipe: r.serializer(@recipe, RecipeSerializer, context: { current_user: current_user })
         }
       end
     )

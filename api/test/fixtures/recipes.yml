@@ -1,0 +1,41 @@
+spaghetti_carbonara:
+  title: Spaghetti Carbonara
+  description: Classic Italian pasta dish with eggs, cheese, and guanciale
+  ingredient_entries: ["pasta", "eggs", "pecorino", "guanciale", "black pepper"]
+  image_url: https://example.com/carbonara.jpg
+  prep_time: 15
+  cook_time: 20
+  ratings: 4.8
+  cuisine: Italian
+  category: Pasta
+  author: Traditional
+  created_at: <%= Time.current %>
+  updated_at: <%= Time.current %>
+
+tomato_soup:
+  title: Classic Tomato Soup
+  description: Simple and comforting tomato soup with fresh basil
+  ingredient_entries: ["tomatoes", "garlic", "basil", "onion", "cream"]
+  image_url: https://example.com/tomato-soup.jpg
+  prep_time: 10
+  cook_time: 30
+  ratings: 4.5
+  cuisine: American
+  category: Soup
+  author: Chef John
+  created_at: <%= Time.current %>
+  updated_at: <%= Time.current %>
+
+chicken_curry:
+  title: Indian Chicken Curry
+  description: Aromatic curry with tender chicken pieces
+  ingredient_entries: ["chicken", "curry powder", "onion", "garlic", "ginger", "tomatoes"]
+  image_url: https://example.com/curry.jpg
+  prep_time: 20
+  cook_time: 40
+  ratings: 4.7
+  cuisine: Indian
+  category: Main Course
+  author: Chef Sharma
+  created_at: <%= Time.current %>
+  updated_at: <%= Time.current %>

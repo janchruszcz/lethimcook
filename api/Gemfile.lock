@@ -312,6 +312,7 @@ DEPENDENCIES
   debug
   devise
   kamal
+  minitest
   pagy
   panko_serializer!
   pg (~> 1.1)

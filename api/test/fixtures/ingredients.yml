@@ -1,0 +1,23 @@
+pasta:
+  name: pasta
+  category: Grains
+  created_at: <%= Time.current %>
+  updated_at: <%= Time.current %>
+
+tomato:
+  name: tomatoes
+  category: Vegetables
+  created_at: <%= Time.current %>
+  updated_at: <%= Time.current %>
+
+garlic:
+  name: garlic
+  category: Vegetables
+  created_at: <%= Time.current %>
+  updated_at: <%= Time.current %>
+
+chicken:
+  name: chicken
+  category: Meat
+  created_at: <%= Time.current %>
+  updated_at: <%= Time.current %>

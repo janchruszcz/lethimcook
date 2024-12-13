@@ -1,0 +1,11 @@
+john_carbonara:
+  user: john
+  recipe: spaghetti_carbonara
+  created_at: <%= Time.current %>
+  updated_at: <%= Time.current %>
+
+jane_curry:
+  user: jane
+  recipe: chicken_curry
+  created_at: <%= Time.current %>
+  updated_at: <%= Time.current %>
