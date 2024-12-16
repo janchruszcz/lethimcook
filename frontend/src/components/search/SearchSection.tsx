@@ -4,7 +4,7 @@ import { Card } from '../ui/Card';
 import { SearchBar } from './SearchBar';
 import { ExactMatchToggle } from './ExactMatchToggle';
 import { Button } from '../ui/Button';
-import { AIChefModal } from '../ai/AiChefModal';
+import { AIChefModal } from '../ai/AIChefModal';
 import { useAuth } from '../../contexts/AuthContext';
 interface SearchSectionProps {
   onIngredientsChange: (ingredients: string[]) => void;
