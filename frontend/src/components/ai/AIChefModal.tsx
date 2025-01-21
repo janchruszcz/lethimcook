@@ -1,10 +1,13 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { Modal } from '../ui/Modal';
 import { useAIRecipe } from '../../hooks/useAIRecipe';
 import { AIChefLoading } from './AIChefLoading';
 import { AIChefError } from './AIChefError';
 import { AIGeneratedRecipe } from './AIGeneratedRecipe';
 import { useRecipeFavorite } from '../../hooks/useRecipeFavorite';
+import { generateRecipe } from '../../api/ai';
+import { usePollingJob } from '../../hooks/usePollingJob';
+
 interface AIChefModalProps {
   ingredients: string[];
   isOpen: boolean;
@@ -12,8 +15,23 @@ interface AIChefModalProps {
 }
 
 export function AIChefModal({ ingredients, isOpen, onClose }: AIChefModalProps) {
-  const { recipe, isLoading, error } = useAIRecipe(ingredients, isOpen);
+  const [jobId, setJobId] = useState<string | null>(null);
+  const { recipe, isLoading, error } = usePollingJob(jobId);
   const { isFavorited, toggleFavorite } = useRecipeFavorite(recipe?.id);
+
+  useEffect(() => {
+    if (isOpen && ingredients.length > 0) {
+      const startJob = async () => {
+        try {
+          const newJobId = await generateRecipe(ingredients);
+          setJobId(newJobId);
+        } catch (err) {
+          console.error('Failed to start recipe generation:', err);
+        }
+      };
+      startJob();
+    }
+  }, [isOpen, ingredients]);
 
   if (!isOpen) return null;
 
@@ -23,7 +41,7 @@ export function AIChefModal({ ingredients, isOpen, onClose }: AIChefModalProps) 
         {isLoading ? (
           <AIChefLoading />
         ) : error ? (
-          <AIChefError />
+          <AIChefError message={error} />
         ) : recipe ? (
           <AIGeneratedRecipe
             recipe={recipe}

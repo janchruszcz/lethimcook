@@ -36,6 +36,7 @@ Rails.application.routes.draw do
       end
       resources :favorites, only: [:index, :create, :destroy]
       post 'ai/generate_recipe', to: 'ai_chef#generate_recipe'
+      get 'ai/recipe_status/:job_id', to: 'ai_chef#recipe_status'
     end
   end
 end

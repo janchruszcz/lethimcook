@@ -3,4 +3,14 @@
 require_relative "../config/environment"
 require "solid_queue/cli"
 
-SolidQueue::Cli.start(ARGV)
+puts "Starting Solid Queue CLI..."
+puts "RAILS_ENV: #{Rails.env}"
+puts "Database Config: #{ActiveRecord::Base.configurations.configs_for(env_name: Rails.env).map(&:database)}"
+
+begin
+  SolidQueue::Cli.start(ARGV)
+rescue => e
+  puts "Error starting Solid Queue: #{e.message}"
+  puts e.backtrace
+  raise
+end
