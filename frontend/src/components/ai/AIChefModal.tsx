@@ -1,12 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import { Modal } from '../ui/Modal';
-import { useAIRecipe } from '../../hooks/useAIRecipe';
 import { AIChefLoading } from './AIChefLoading';
 import { AIChefError } from './AIChefError';
 import { AIGeneratedRecipe } from './AIGeneratedRecipe';
 import { useRecipeFavorite } from '../../hooks/useRecipeFavorite';
 import { generateRecipe } from '../../api/ai';
-import { usePollingJob } from '../../hooks/usePollingJob';
+import { usePollingRecipe } from '../../hooks/usePollingRecipe';
 
 interface AIChefModalProps {
   ingredients: string[];
@@ -15,21 +14,21 @@ interface AIChefModalProps {
 }
 
 export function AIChefModal({ ingredients, isOpen, onClose }: AIChefModalProps) {
-  const [jobId, setJobId] = useState<string | null>(null);
-  const { recipe, isLoading, error } = usePollingJob(jobId);
+  const [recipeId, setRecipeId] = useState<string | null>(null);
+  const { recipe, isLoading, error } = usePollingRecipe(recipeId);
   const { isFavorited, toggleFavorite } = useRecipeFavorite(recipe?.id);
 
   useEffect(() => {
     if (isOpen && ingredients.length > 0) {
-      const startJob = async () => {
+      const startGeneration = async () => {
         try {
-          const newJobId = await generateRecipe(ingredients);
-          setJobId(newJobId);
+          const newRecipeId = await generateRecipe(ingredients);
+          setRecipeId(newRecipeId);
         } catch (err) {
           console.error('Failed to start recipe generation:', err);
         }
       };
-      startJob();
+      startGeneration();
     }
   }, [isOpen, ingredients]);
 

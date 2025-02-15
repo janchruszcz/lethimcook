@@ -2,32 +2,36 @@ import { useState, useEffect } from 'react';
 import { checkRecipeStatus } from '../api/ai';
 import { Recipe } from '../types';
 
-export function usePollingJob(jobId: string | null) {
+export function usePollingRecipe(recipeId: string | null) {
   const [recipe, setRecipe] = useState<Recipe | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    if (!jobId) return;
+    if (!recipeId) return;
 
-    const pollInterval = 2000; // Poll every 2 seconds
+    const pollInterval = 3000;
     let timeoutId: NodeJS.Timeout;
 
     const checkStatus = async () => {
       try {
-        const response = await checkRecipeStatus(jobId);
+        const response = await checkRecipeStatus(recipeId);
+        console.log('Recipe status response:', response); // Debug log
         
-        if (response.status === 'completed' && response.recipe) {
+        if (response.recipe?.status === 'completed' && response.recipe) {
+          console.log('Setting recipe:', response.recipe); // Debug log
           setRecipe(response.recipe);
           setIsLoading(false);
-        } else if (response.status === 'failed') {
-          setError('Recipe generation failed');
+        } else if (response.recipe?.status === 'failed') {
+          console.log('Recipe failed:', response.error); // Debug log
+          setError(response.error || 'Recipe generation failed');
           setIsLoading(false);
         } else {
-          // Schedule next poll
+          console.log('Still pending, polling...'); // Debug log
           timeoutId = setTimeout(checkStatus, pollInterval);
         }
       } catch (err) {
+        console.error('Polling error:', err); // Debug log
         setError('Failed to check recipe status');
         setIsLoading(false);
       }
@@ -36,9 +40,9 @@ export function usePollingJob(jobId: string | null) {
     checkStatus();
 
     return () => {
-      clearTimeout(timeoutId);
+      if (timeoutId) clearTimeout(timeoutId);
     };
-  }, [jobId]);
+  }, [recipeId]);
 
   return { recipe, error, isLoading };
 }

@@ -1,27 +1,30 @@
 class Api::V1::AiChefController < ApplicationController
-  wrap_parameters false
 
   def generate_recipe
-    job = GenerateRecipeJob.perform_later(params[:ingredients])
-    render json: { jobId: job.job_id }
+    recipe = Recipe.create!(
+      title: 'New Recipe',
+      status: 'pending'
+    )
+    
+    GenerateRecipeJob.perform_later(params[:ingredients], recipe.id)
+    
+    render json: { 
+      recipeId: recipe.id,
+      message: 'Recipe generation started'
+    }
   end
 
   def recipe_status
-    job = SolidQueue::Job.find_by(active_job_id: params[:job_id])
+    recipe = Recipe.find_by(id: params[:recipe_id])
     
-    if job.nil?
-      render json: { status: 'failed', error: 'Job not found' }
-    elsif job.finished_at.present?
-      if job.failed_execution
-        render json: { status: 'failed', error: job.failed_execution.error }
-      else
-        render json: { 
-          status: 'completed',
-          recipe: job.result
-        }
-      end
+    if recipe.nil?
+      render json: { status: 'failed', error: 'Recipe not found' }
     else
-      render json: { status: 'pending' }
+      puts recipe.inspect
+      puts recipe.as_json
+      render json: { 
+        recipe: recipe
+      }
     end
   end
 end

@@ -7,6 +7,12 @@ class Recipe < ApplicationRecord
   has_many :favorites
   has_many :favorited_by, through: :favorites, source: :user
 
+  enum :status, {
+    pending: 0,
+    completed: 1,
+    failed: 2
+  }
+
   pg_search_scope :search_by_ingredients, 
     associated_against: {
       ingredients: :name

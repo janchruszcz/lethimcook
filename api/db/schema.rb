@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2024_12_07_115417) do
+ActiveRecord::Schema[8.0].define(version: 2025_02_15_104056) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -55,6 +55,7 @@ ActiveRecord::Schema[8.0].define(version: 2024_12_07_115417) do
     t.string "author"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.integer "status"
     t.index ["category"], name: "index_recipes_on_category"
     t.index ["cuisine"], name: "index_recipes_on_cuisine"
     t.index ["ingredient_entries"], name: "index_recipes_on_ingredient_entries", using: :gin

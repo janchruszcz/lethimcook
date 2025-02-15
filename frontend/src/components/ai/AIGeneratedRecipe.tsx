@@ -43,7 +43,7 @@ export function AIGeneratedRecipe({ recipe, onFavoriteToggle, isFavorited }: AIG
         <div className="mb-6">
           <h3 className="text-lg font-semibold mb-3">Ingredients</h3>
           <div className="grid grid-cols-2 gap-2">
-            {recipe.ingredient_entries.map((ingredient) => (
+            {recipe.ingredient_entries?.map((ingredient) => (
               <div
                 key={ingredient.id}
                 className="flex items-center gap-2 text-gray-700"
@@ -58,7 +58,7 @@ export function AIGeneratedRecipe({ recipe, onFavoriteToggle, isFavorited }: AIG
         <div>
           <h3 className="text-lg font-semibold mb-3">Instructions</h3>
           <ol className="space-y-4">
-            {recipe.instructions.map((instruction, index) => (
+            {recipe.instructions?.map((instruction, index) => (
               <li key={index} className="flex gap-4">
                 <span className="flex-shrink-0 w-6 h-6 bg-secondary/10 text-secondary rounded-full flex items-center justify-center font-medium">
                   {index + 1}
