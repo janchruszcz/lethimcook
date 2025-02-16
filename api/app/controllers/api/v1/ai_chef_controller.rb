@@ -20,11 +20,7 @@ class Api::V1::AiChefController < ApplicationController
     if recipe.nil?
       render json: { status: 'failed', error: 'Recipe not found' }
     else
-      puts recipe.inspect
-      puts recipe.as_json
-      render json: { 
-        recipe: recipe
-      }
+      render json: { recipe: recipe }
     end
   end
 end

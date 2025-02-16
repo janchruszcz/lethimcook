@@ -4,12 +4,8 @@ class GenerateRecipeJob < ApplicationJob
   def perform(ingredients, recipe_id)
     recipe = Recipe.find(recipe_id)
 
-    puts "Starting recipe generation job..."
-    puts "Ingredients received: #{ingredients}"
     begin
-      puts "Initializing RecipeGenerator..."
       recipe_data = RecipeGenerator.new(ingredients).generate
-      puts "Recipe successfully generated: #{recipe_data['title']}"
       
       recipe.update!(
         title: recipe_data['title'],
@@ -26,9 +22,7 @@ class GenerateRecipeJob < ApplicationJob
         status: 1
       )
       
-      puts "Job completed successfully"
     rescue StandardError => e
-      puts "Job failed with error: #{e.message}"
       recipe.update!(
         status: 2,
         error_message: e.message

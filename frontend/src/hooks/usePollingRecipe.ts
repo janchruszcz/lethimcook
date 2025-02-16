@@ -16,22 +16,17 @@ export function usePollingRecipe(recipeId: string | null) {
     const checkStatus = async () => {
       try {
         const response = await checkRecipeStatus(recipeId);
-        console.log('Recipe status response:', response); // Debug log
         
         if (response.recipe?.status === 'completed' && response.recipe) {
-          console.log('Setting recipe:', response.recipe); // Debug log
           setRecipe(response.recipe);
           setIsLoading(false);
         } else if (response.recipe?.status === 'failed') {
-          console.log('Recipe failed:', response.error); // Debug log
           setError(response.error || 'Recipe generation failed');
           setIsLoading(false);
         } else {
-          console.log('Still pending, polling...'); // Debug log
           timeoutId = setTimeout(checkStatus, pollInterval);
         }
       } catch (err) {
-        console.error('Polling error:', err); // Debug log
         setError('Failed to check recipe status');
         setIsLoading(false);
       }

@@ -1,15 +1,12 @@
 class RecipeGenerator
   def initialize(ingredients)
     @ingredients = ingredients
-    puts "RecipeGenerator initialized with ingredients: #{ingredients}"
   end
 
   def generate
-    puts "Creating Anthropic client..."
     client = Anthropic::Client.new
 
     begin
-      puts "Sending request to Claude..."
       response = client.messages(
         parameters: {
           model: "claude-3-sonnet-20240229",
@@ -28,25 +25,19 @@ class RecipeGenerator
           ]
         }
       ) 
-      puts "Received response from Claude"
 
       recipe_text = response["content"].first["text"]
-      puts "Extracted recipe text from response"
+
       raise "Invalid recipe format" unless recipe_text.present?
       
-      puts "Parsing recipe JSON..."
       recipe = JSON.parse(recipe_text)
-      puts "Successfully parsed JSON"
       
       raise "Invalid recipe structure" unless valid_recipe?(recipe)
-      puts "Recipe structure validation passed"
       
       recipe
     rescue JSON::ParserError => e
-      puts "JSON parsing failed: #{e.message}"
       raise "Failed to parse recipe: #{e.message}"
     rescue StandardError => e
-      puts "Error during recipe generation: #{e.message}"
       raise "Recipe generation error: #{e.message}"
     end
   end

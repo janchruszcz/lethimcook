@@ -16,6 +16,5 @@ export async function generateRecipe(ingredients: string[]): Promise<string> {
 
 export async function checkRecipeStatus(recipeId: string): Promise<GenerateRecipeResponse> {
   const { data } = await api.get<GenerateRecipeResponse>(`/api/v1/ai/recipe_status/${recipeId}`);
-  console.log('Check recipe status response:', data);
   return data;
 }
