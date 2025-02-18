@@ -1,22 +1,18 @@
 class Api::V1::AiChefController < ApplicationController
 
   def generate_recipe
-    recipe = Recipe.create!(
-      title: 'New Recipe',
-      status: 'pending'
-    )
-    
+    recipe = Recipe.create!(title: 'New Recipe', status: 'pending')
+
     GenerateRecipeJob.perform_later(params[:ingredients], recipe.id)
-    
-    render json: { 
-      recipeId: recipe.id,
-      message: 'Recipe generation started'
-    }
+
+    render json: { recipeId: recipe.id, message: 'Recipe generation started' }
   end
 
   def recipe_status
     recipe = Recipe.find_by(id: params[:recipe_id])
-    
+
+    puts "Recipe status: #{recipe.inspect}"
+
     if recipe.nil?
       render json: { status: 'failed', error: 'Recipe not found' }
     else

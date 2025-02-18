@@ -1,6 +1,7 @@
 class RecipeGenerator
-  def initialize(ingredients)
+  def initialize(ingredients, recipe_id)
     @ingredients = ingredients
+    @recipe = Recipe.find(recipe_id)
   end
 
   def generate
@@ -27,18 +28,19 @@ class RecipeGenerator
       ) 
 
       recipe_text = response["content"].first["text"]
-
       raise "Invalid recipe format" unless recipe_text.present?
       
-      recipe = JSON.parse(recipe_text)
-      
-      raise "Invalid recipe structure" unless valid_recipe?(recipe)
-      
-      recipe
+      recipe_data = JSON.parse(recipe_text)
+      raise "Invalid recipe structure" unless valid_recipe?(recipe_data)
+      puts "Recipe data: #{recipe_data}"
+      update_recipe(recipe_data)
+      puts "Recipe updated: #{@recipe.inspect}"
+      @recipe
+
     rescue JSON::ParserError => e
-      raise "Failed to parse recipe: #{e.message}"
+      handle_error("Failed to parse recipe: #{e.message}")
     rescue StandardError => e
-      raise "Recipe generation error: #{e.message}"
+      handle_error("Recipe generation error: #{e.message}")
     end
   end
 
@@ -49,6 +51,30 @@ class RecipeGenerator
   end
 
   private
+
+  def update_recipe(recipe_data)
+    puts "Updating recipe with data: #{recipe_data.inspect}"
+    @recipe.update!(
+      title: recipe_data['title'],
+      description: recipe_data['description'],
+      ingredient_entries: recipe_data['ingredient_entries'],
+      # instructions: recipe_data['instructions'],
+      cuisine: recipe_data['cuisine'],
+      category: recipe_data['category'],
+      prep_time: recipe_data['prep_time'],
+      cook_time: recipe_data['cook_time'],
+      author: recipe_data['author'],
+      status: 1
+    )
+  end
+
+  def handle_error(message)
+    @recipe.update!(
+      status: 2,
+      error_message: message
+    )
+    raise message
+  end
 
   def valid_recipe?(recipe)
     required_fields = %w[title description ingredient_entries instructions]
