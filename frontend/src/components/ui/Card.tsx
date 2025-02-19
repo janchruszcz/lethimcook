@@ -9,7 +9,7 @@ interface CardProps {
 export function Card({ children, className }: CardProps) {
   return (
     <div className={clsx(
-      "bg-white rounded-xl shadow-md overflow-hidden hover:shadow-xl transition-all duration-300",
+      "rounded-xl overflow-hidden transition-all duration-300",
       className
     )}>
       {children}

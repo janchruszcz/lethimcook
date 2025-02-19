@@ -9,11 +9,13 @@ import { RecipeGrid } from './components/recipe/RecipeGrid';
 import { searchRecipes } from './api/recipes';
 import { getFavoriteRecipes } from './api/favorites';
 import { RecipeFilters } from './types';
+import { CreateRecipeModal } from './components/recipe/CreateRecipeModal';
 
 export default function App() {
   const [showAuthModal, setShowAuthModal] = useState(false);
   const [showFavorites, setShowFavorites] = useState(false);
   const [ingredients, setIngredients] = useState<string[]>([]);
+  const [showCreateRecipeModal, setShowCreateRecipeModal] = useState(false);
   const [filters, setFilters] = useState<RecipeFilters>({
     ingredients: [],
     page: 1,
@@ -61,6 +63,7 @@ export default function App() {
               onLoginClick={() => setShowAuthModal(true)}
               showFavorites={showFavorites}
               onFavoritesClick={() => setShowFavorites(!showFavorites)}
+              onCreateRecipeClick={() => setShowCreateRecipeModal(true)}
             />
 
             
@@ -84,6 +87,13 @@ export default function App() {
 
             {showAuthModal && (
               <AuthModal onClose={() => setShowAuthModal(false)} />
+            )}
+
+            {showCreateRecipeModal && (
+              <CreateRecipeModal 
+                isOpen={showCreateRecipeModal} 
+                onClose={() => setShowCreateRecipeModal(false)} 
+              />
             )}
           </div>
         </div>

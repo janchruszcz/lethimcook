@@ -22,7 +22,7 @@ export function Modal({ children, onClose, size = 'md' }: ModalProps) {
         onClick={onClose}
       />
       <div className="flex min-h-full items-center justify-center p-4">
-        <Card className={`relative w-full ${sizes[size]} overflow-hidden`}>
+        <Card className={`relative w-full ${sizes[size]} overflow-hidden bg-white`}>
           {children}
         </Card>
       </div>

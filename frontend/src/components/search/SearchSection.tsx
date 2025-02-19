@@ -27,7 +27,7 @@ export function SearchSection({
 
   return (
     <>
-      <Card className={`backdrop-blur-sm bg-white/90 border border-teal/10 w-full max-w-4xl mx-auto overflow-visible relative transition-[z-index] duration-0 z-10`}>
+      <Card className={`backdrop-blur-sm hover:shadow-xl bg-white/90 border border-teal/10 w-full max-w-4xl mx-auto overflow-visible relative transition-[z-index] duration-0 z-10`}>
         <div className="p-6">
           <div className="flex justify-between items-center gap-2 mb-6">
             <div className="flex items-center gap-2">
