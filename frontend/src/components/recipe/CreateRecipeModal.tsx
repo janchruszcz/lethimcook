@@ -20,8 +20,9 @@ export function CreateRecipeModal({ isOpen, onClose }: CreateRecipeModalProps) {
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
   const [imageUrl, setImageUrl] = useState('');
+  const [prepTime, setPrepTime] = useState('');
   const [cookTime, setCookTime] = useState('');
-  const [ingredients, setIngredients] = useState(['']);
+  const [ingredients, setIngredients] = useState<string[]>([]);
   const [instructions, setInstructions] = useState(['']);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [searchTerm, setSearchTerm] = useState('');
@@ -87,6 +88,7 @@ export function CreateRecipeModal({ isOpen, onClose }: CreateRecipeModalProps) {
         title,
         description,
         imageUrl,
+        prepTime: parseInt(prepTime, 10),
         cookTime: parseInt(cookTime, 10),
         ingredients: ingredients.filter(i => i.trim() !== ''),
         instructions: instructions.filter(i => i.trim() !== ''),
@@ -142,10 +144,18 @@ export function CreateRecipeModal({ isOpen, onClose }: CreateRecipeModalProps) {
 
           <FormInput
             type="text"
-            label="Cooking Time (minutes)"
+            label="Prep Time"
+            value={prepTime}
+            onChange={setPrepTime}
+            placeholder="Enter prep time"
+          />
+
+          <FormInput
+            type="text"
+            label="Cook Time"
             value={cookTime}
             onChange={setCookTime}
-            placeholder="Enter cooking time"
+            placeholder="Enter cook time"
           />
 
           <div>
@@ -256,7 +266,7 @@ export function CreateRecipeModal({ isOpen, onClose }: CreateRecipeModalProps) {
             <div className="space-y-2">
               {instructions.map((instruction, index) => (
                 <div key={index} className="flex gap-2">
-                  <div className="flex-1 flex gap-2">
+                  <div className="flex-1 flex gap-2 items-center">
                     <span className="flex-shrink-0 w-6 h-6 bg-secondary/10 text-secondary rounded-full flex items-center justify-center font-medium">
                       {index + 1}
                     </span>

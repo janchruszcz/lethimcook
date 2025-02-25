@@ -11,7 +11,7 @@ export function AIChefLoading() {
         </div>
       </div>
       <h3 className="mt-6 text-xl font-semibold text-gray-800">
-        Jesse is cooking something special...
+        Mario is cooking something special...
       </h3>
       <p className="mt-2 text-gray-600">
         Crafting a unique recipe with your ingredients

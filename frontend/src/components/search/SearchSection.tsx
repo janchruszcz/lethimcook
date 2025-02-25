@@ -45,7 +45,7 @@ export function SearchSection({
               >
                 <ChefHat className="w-4 h-4 mr-2 text-secondary group-hover:animate-bounce" />
                 <span className="bg-gradient-to-r from-secondary via-primary to-secondary bg-clip-text text-transparent bg-[length:200%] bg-left hover:bg-right transition-all duration-700 font-medium">
-                  Ask Jesse, AI Chef
+                  Ask Mario
                 </span>
               </Button>
             </div>
