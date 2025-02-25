@@ -150,7 +150,7 @@ export function Header({ onLoginClick, onProfileClick, showFavorites, showMyReci
             ? 'Your Favorite Recipes' 
             : showMyRecipes 
               ? 'Your Created Recipes'
-              : 'Discover recipes with ingredients you already have'}
+              : '✨ Discover recipes with ingredients you already have ✨'}
         </p>
       </div>
     </div>

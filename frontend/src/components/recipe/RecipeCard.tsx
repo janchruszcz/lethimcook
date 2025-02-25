@@ -27,10 +27,10 @@ export function RecipeCard({ recipe }: RecipeCardProps) {
 
   return (
     <>
-      <Card className="group transform hover:-translate-y-1 transition-all duration-300">
+      <Card className="group bg-white shadow-md transform hover:-translate-y-1 transition-all duration-300">
         <div className="relative h-40">
           <img
-            src={recipe.imageUrl}
+            src={'https://chilitonka.com/wp-content/uploads/2013/09/curry-ct2867.jpg'}
             alt={recipe.title}
             className="w-full h-full object-cover rounded-t-xl"
           />

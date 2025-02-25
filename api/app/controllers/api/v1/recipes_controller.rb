@@ -43,4 +43,28 @@ class Api::V1::RecipesController < ApplicationController
       end
     )
   end
+
+  def create
+    @recipe = current_user.recipes.build(recipe_params)
+    
+    if @recipe.save
+      render(
+        json: Panko::Response.create do |r|
+          {
+            success: true,
+            recipe: r.serializer(@recipe, RecipeSerializer, context: { current_user: current_user })
+          }
+        end
+      )
+    else
+      render json: @recipe.errors, status: :unprocessable_entity
+    end
+  end
+
+  private
+
+  def recipe_params
+    params.expect(recipe: [:title, :description, :ingredient_entries, :instructions, :image_url, :prep_time, :cook_time, :cuisine, :category, :author])
+  end
+  
 end

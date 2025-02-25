@@ -11,8 +11,6 @@ class Api::V1::AiChefController < ApplicationController
   def recipe_status
     recipe = Recipe.find_by(id: params[:recipe_id])
 
-    puts "Recipe status: #{recipe.inspect}"
-
     if recipe.nil?
       render json: { status: 'failed', error: 'Recipe not found' }
     else

@@ -1,9 +1,14 @@
-import React, { useState } from 'react';
-import { Plus, Minus } from 'lucide-react';
+import React, { useState, useRef } from 'react';
+import { Plus, Minus, Search as SearchIcon, X } from 'lucide-react';
 import { Modal } from '../ui/Modal';
 import { FormInput } from '../ui/FormInput';
 import { Button } from '../ui/Button';
 import { useToast } from '../../contexts/ToastContext';
+import { createRecipe } from '../../api/recipes';
+import { useQuery } from 'react-query';
+import { searchIngredients } from '../../api/ingredients';
+import { useDebounce } from '../../hooks/useDebounce';
+import { useOnClickOutside } from '../../hooks/useOnClickOutside';
 
 interface CreateRecipeModalProps {
   isOpen: boolean;
@@ -19,6 +24,22 @@ export function CreateRecipeModal({ isOpen, onClose }: CreateRecipeModalProps) {
   const [ingredients, setIngredients] = useState(['']);
   const [instructions, setInstructions] = useState(['']);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [searchTerm, setSearchTerm] = useState('');
+  const [isSearchOpen, setIsSearchOpen] = useState(false);
+  const debouncedSearch = useDebounce(searchTerm, 300);
+  const searchContainerRef = useRef<HTMLDivElement>(null);
+  const inputRef = useRef<HTMLInputElement>(null);
+
+  useOnClickOutside(searchContainerRef, () => setIsSearchOpen(false));
+
+  const { data: suggestions = [], isLoading } = useQuery(
+    ['ingredientSearch', debouncedSearch],
+    () => searchIngredients(debouncedSearch),
+    {
+      enabled: debouncedSearch.length > 1,
+      keepPreviousData: true,
+    }
+  );
 
   const handleAddIngredient = () => {
     setIngredients([...ingredients, '']);
@@ -48,13 +69,30 @@ export function CreateRecipeModal({ isOpen, onClose }: CreateRecipeModalProps) {
     setInstructions(newInstructions);
   };
 
+  const handleIngredientSelect = (ingredient: string) => {
+    if (!ingredients.includes(ingredient)) {
+      setIngredients([...ingredients, ingredient]);
+    }
+    setSearchTerm('');
+    setIsSearchOpen(false);
+    inputRef.current?.focus();
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsSubmitting(true);
 
     try {
-      // TODO: Implement API call to create recipe
-      await new Promise(resolve => setTimeout(resolve, 1000)); // Simulated API call
+      const recipeData = {
+        title,
+        description,
+        imageUrl,
+        cookTime: parseInt(cookTime, 10),
+        ingredients: ingredients.filter(i => i.trim() !== ''),
+        instructions: instructions.filter(i => i.trim() !== ''),
+      };
+
+      await createRecipe(recipeData);
       showToast('Recipe created successfully!', 'success');
       onClose();
     } catch (error) {
@@ -111,45 +149,92 @@ export function CreateRecipeModal({ isOpen, onClose }: CreateRecipeModalProps) {
           />
 
           <div>
-            <div className="flex items-center justify-between mb-2">
-              <label className="block text-sm font-medium text-gray-700">
-                Ingredients
-              </label>
-              <Button
-                type="button"
-                variant="ghost"
-                size="sm"
-                onClick={handleAddIngredient}
-                className="text-secondary hover:bg-secondary/10"
-              >
-                <Plus size={16} className="mr-1" />
-                Add Ingredient
-              </Button>
-            </div>
-            <div className="space-y-2">
-              {ingredients.map((ingredient, index) => (
-                <div key={index} className="flex gap-2">
-                  <input
-                    type="text"
-                    value={ingredient}
-                    onChange={(e) => handleIngredientChange(index, e.target.value)}
-                    placeholder={`Ingredient ${index + 1}`}
-                    className="flex-1 px-4 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-secondary/20 focus:border-secondary"
-                    required
-                  />
-                  {ingredients.length > 1 && (
-                    <Button
-                      type="button"
-                      variant="ghost"
-                      onClick={() => handleRemoveIngredient(index)}
-                      className="text-red-500 hover:bg-red-50"
-                    >
-                      <Minus size={16} />
-                    </Button>
-                  )}
+            <label className="block text-sm font-medium text-gray-700 mb-2">
+              Ingredients
+            </label>
+            <div ref={searchContainerRef} className="relative mb-2">
+              <div className="relative">
+                <SearchIcon 
+                  size={20} 
+                  className="absolute left-3 top-1/2 transform -translate-y-1/2 text-secondary"
+                />
+                <input
+                  ref={inputRef}
+                  type="text"
+                  value={searchTerm}
+                  onChange={(e) => {
+                    setSearchTerm(e.target.value);
+                    setIsSearchOpen(true);
+                  }}
+                  onKeyPress={(e) => {
+                    if (e.key === 'Enter' && searchTerm.trim()) {
+                      handleIngredientSelect(searchTerm.trim());
+                    }
+                  }}
+                  onFocus={() => setIsSearchOpen(true)}
+                  placeholder="Add an ingredient"
+                  className="w-full pl-10 pr-16 py-3.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-secondary/20 focus:border-secondary"
+                />
+                <Button
+                  type="button"
+                  onClick={() => searchTerm.trim() && handleIngredientSelect(searchTerm.trim())}
+                  className="absolute right-2 top-1/2 transform -translate-y-1/2"
+                  variant="ghost"
+                  size="sm"
+                >
+                  <Plus size={20} />
+                </Button>
+              </div>
+
+              {isSearchOpen && searchTerm.length > 1 && (
+                <div className="absolute left-0 right-0 mt-1">
+                  <div className="relative">
+                    <div className="absolute left-0 right-0 bg-white rounded-lg shadow-xl border border-gray-100 max-h-[300px] overflow-y-auto z-[9999]">
+                      {isLoading ? (
+                        <div className="p-4 text-gray-500">Loading...</div>
+                      ) : suggestions.length > 0 ? (
+                        <ul className="py-2">
+                          {suggestions.map((ingredient) => (
+                            <li key={ingredient.id}>
+                              <button
+                                type="button"
+                                onClick={() => handleIngredientSelect(ingredient.name)}
+                                className="w-full px-4 py-2 text-left hover:bg-gray-50 focus:bg-gray-50 focus:outline-none transition-colors duration-150"
+                              >
+                                <span className="font-medium text-gray-700">{ingredient.name}</span>
+                                <span className="ml-2 text-sm text-gray-500">{ingredient.category}</span>
+                              </button>
+                            </li>
+                          ))}
+                        </ul>
+                      ) : (
+                        <div className="p-4 text-gray-500">No ingredients found</div>
+                      )}
+                    </div>
+                  </div>
                 </div>
-              ))}
+              )}
             </div>
+
+            {ingredients.length > 0 && (
+              <div className="flex flex-wrap gap-2">
+                {ingredients.map((ingredient, index) => (
+                  <span
+                    key={index}
+                    className="inline-flex items-center gap-2 px-3 py-1.5 bg-secondary/10 text-secondary-dark rounded-full hover:bg-secondary/20 transition-colors"
+                  >
+                    {ingredient}
+                    <button
+                      type="button"
+                      onClick={() => handleRemoveIngredient(index)}
+                      className="p-0.5 hover:bg-secondary/30 rounded-full transition-colors"
+                    >
+                      <X size={14} />
+                    </button>
+                  </span>
+                ))}
+              </div>
+            )}
           </div>
 
           <div>

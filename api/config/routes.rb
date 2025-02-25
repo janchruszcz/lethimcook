@@ -28,7 +28,7 @@ Rails.application.routes.draw do
   # API routes
   namespace :api do
     namespace :v1 do
-      resources :recipes, only: [:index, :show]
+      resources :recipes, only: [:index, :show, :create]
       resources :ingredients, only: [:index] do
         collection do
           get 'search'

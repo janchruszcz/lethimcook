@@ -1,7 +1,7 @@
 class Recipe < ApplicationRecord
   include PgSearch::Model
 
-  # belongs_to :user
+  belongs_to :user
   has_many :recipe_ingredients, dependent: :destroy
   has_many :ingredients, through: :recipe_ingredients
   has_many :favorites
