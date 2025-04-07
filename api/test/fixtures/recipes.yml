@@ -9,6 +9,7 @@ spaghetti_carbonara:
   cuisine: Italian
   category: Pasta
   author: Traditional
+  user: john
   created_at: <%= Time.current %>
   updated_at: <%= Time.current %>
 
@@ -23,6 +24,7 @@ tomato_soup:
   cuisine: American
   category: Soup
   author: Chef John
+  user: john
   created_at: <%= Time.current %>
   updated_at: <%= Time.current %>
 
@@ -37,5 +39,6 @@ chicken_curry:
   cuisine: Indian
   category: Main Course
   author: Chef Sharma
+  user: john
   created_at: <%= Time.current %>
   updated_at: <%= Time.current %>
