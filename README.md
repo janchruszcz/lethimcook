@@ -4,33 +4,35 @@ A meme-inspired, modern recipe finder application that helps you discover recipe
 
 Note: This is a work in progress. Initial load - first query to API takes a while because of fly.io setup.
 
-## 🚀 Features
+## 🧠 Key Features
 
-- Search recipes by ingredients with autocomplete
-- View detailed recipe information including ingredients and instructions
-- Mark recipes as favorites for later usage
-- Basic user authentication system
-- Responsive design with beautiful UI
-- RESTful API with Rails backend
-- PostgreSQL database
+### 🔍 Smart Recipe Search
+> Search by ingredients (with autocomplete) using full-text PostgreSQL search.
 
-## 🛠 Tech Stack
+### 📝 Auth & Favorites
+> Users can sign up, create recipes, save favorite ones, and generate AI recipes.
 
-### Frontend
-- React 18
-- TypeScript
-- Tailwind CSS
-- React Query for data fetching
+### 🪄 AI-Powered Recipes
+> Describe what ingredients you have, and Claude (Mario) will cook a recipe just for you.
+
+### ⛓️ Backend API (Rails 8)
+- PostgreSQL with pg_search (possible migration to ElasticSearch in the future)
+- Devise for authentication (session-based for initial simplicity, might migrate to JWT)
+- Minitest for testing
+- Panko Serializer for JSON serialization (better performance)
+- Pagy for pagination (better performance)
+- Anthropic for AI
+- Fully versioned (`/api/v1`)
+- Background jobs for AI generation
+- Service objects and serializers for clean code separation
+
+### 💻 Frontend (React 18 + TS)
+- Component-based architecture
+- Zustand for state management (lightweight, better performance, less code)
+- React Query for fast API access
+- Tailwind CSS for modern responsive UI
 - Axios for API communication
-- Lucide React for icons
 - Vite as build tool
-
-### Backend
-- Ruby on Rails 8.0
-- PostgreSQL with pg_search
-- Devise for authentication
-- Panko Serializer for JSON serialization
-- Rack CORS for handling Cross-Origin requests
 
 ## 🏗 Project Structure
 
@@ -43,7 +45,7 @@ Note: This is a work in progress. Initial load - first query to API takes a whil
 └── frontend/              # React frontend
     ├── api/               # API client and services
     ├── components/        # React components
-    ├── contexts/          # React context providers
+    ├── stores/            # Zustand stores
     └── types/             # TypeScript type definitions
 ```
 
@@ -66,6 +68,19 @@ Note: This is a work in progress. Initial load - first query to API takes a whil
 ### Social Features
 - As a user, I want to see recipe ratings, so I can choose well-tested recipes
 - As a community member, I want to see who authored the recipe, so I can find more recipes from creators I trust
+
+## 🗺️ Roadmap
+
+### User Profile
+- Good-looking user profile page (probably modal)
+- Favorite ingredients/cuisines
+- Reward/achievement system (gamification) - coins/points for creating a recipe and when it's getting favorited by other users etc.
+
+### Groceries provider integration - order ingredients for your favorite recipes
+
+### Recipes 
+- Generate recipe image
+- 
 
 ## 🚦 Getting Started
 
