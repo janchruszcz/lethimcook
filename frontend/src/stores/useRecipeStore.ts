@@ -6,8 +6,6 @@ import type { Recipe, RecipeFilters } from '../types';
 interface RecipeState {
   // State
   filters: RecipeFilters;
-  showFavorites: boolean;
-  showMyRecipes: boolean;
   recipes: Recipe[];
   isLoading: boolean;
   pagination: any;
@@ -30,9 +28,9 @@ export const useRecipeStore = create<RecipeState>((set) => ({
     ingredients: [],
     page: 1,
     exactMatch: false,
+    showFavorites: false,
+    showMyRecipes: false,
   },
-  showFavorites: false,
-  showMyRecipes: false,
   recipes: [],
   isLoading: false,
   pagination: null,
@@ -41,13 +39,11 @@ export const useRecipeStore = create<RecipeState>((set) => ({
   setFilters: (filters) => set({ filters }),
   toggleFavorites: () => 
     set((state) => ({ 
-      showFavorites: !state.showFavorites,
-      showMyRecipes: false 
+      filters: { ...state.filters, showFavorites: !state.filters.showFavorites, showMyRecipes: false }
     })),
   toggleMyRecipes: () => 
     set((state) => ({ 
-      showMyRecipes: !state.showMyRecipes,
-      showFavorites: false 
+      filters: { ...state.filters, showMyRecipes: !state.filters.showMyRecipes, showFavorites: false }
     })),
   updateIngredients: (ingredients) =>
     set((state) => ({

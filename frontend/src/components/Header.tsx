@@ -5,10 +5,13 @@ import { Card } from './ui/Card';
 import { useRecipeStore } from '../stores/useRecipeStore';
 import { useAuthStore } from '../stores/useAuthStore';
 import { useModalStore } from '../stores/useModalStore';
+import { useToastStore } from '../stores/toastStore';
+
 export function Header() {
   const { isAuthenticated, logout } = useAuthStore();
-  const { showFavorites, showMyRecipes, toggleFavorites, toggleMyRecipes } = useRecipeStore();
+  const { filters, toggleFavorites, toggleMyRecipes } = useRecipeStore();
   const { openAuthModal, openCreateRecipeModal, openProfileModal } = useModalStore();
+  const { showToast } = useToastStore();
 
   const handleLogout = async () => {
     try {
@@ -26,19 +29,19 @@ export function Header() {
         <Card className="">
           <div className="flex gap-1">
             <Button
-              variant={showFavorites ? "primary" : "ghost"}
+              variant={filters.showFavorites ? "primary" : "ghost"}
               size="sm"
               onClick={toggleFavorites}
               className={`group bg-gradient-to-r ${
-                showFavorites 
+                filters.showFavorites 
                   ? 'from-secondary to-primary text-white'
                   : 'from-secondary/10 to-primary/10 hover:from-secondary/20 hover:to-primary/20'
               }`}
-              title={showFavorites ? 'Back to Search' : 'Favorites'}
+              title={filters.showFavorites ? 'Back to Search' : 'Favorites'}
             >
               <Heart 
                 className={`w-4 h-4 ${
-                  showFavorites 
+                  filters.showFavorites 
                     ? 'text-white' 
                     : 'text-secondary group-hover:animate-bounce'
                 }`}
@@ -48,19 +51,19 @@ export function Header() {
             {isAuthenticated && (
               <>
                 <Button
-                  variant={showMyRecipes ? "primary" : "ghost"}
+                  variant={filters.showMyRecipes ? "primary" : "ghost"}
                   size="sm"
                   onClick={toggleMyRecipes}
                   className={`group bg-gradient-to-r ${
-                    showMyRecipes 
+                    filters.showMyRecipes 
                       ? 'from-secondary to-primary text-white'
                       : 'from-secondary/10 to-primary/10 hover:from-secondary/20 hover:to-primary/20'
                   }`}
-                  title={showMyRecipes ? 'Back to Search' : 'My Recipes'}
+                  title={filters.showMyRecipes ? 'Back to Search' : 'My Recipes'}
                 >
                   <Utensils 
                     className={`w-4 h-4 ${
-                      showMyRecipes 
+                      filters.showMyRecipes 
                         ? 'text-white' 
                         : 'text-secondary group-hover:animate-bounce'
                     }`}
@@ -124,23 +127,18 @@ export function Header() {
 
       {/* Main Header Content */}
       <div className="text-center space-y-4">
-        <button 
-          onClick={() => showFavorites && toggleFavorites()}
-          className="inline-block"
-        >
-          <Card className="inline-flex items-center justify-center gap-3 backdrop-blur-sm bg-white/90 border border-teal/10 px-6 py-3 shadow-sm hover:shadow-xl">
-            <ChefHat size={32} className="text-teal" />
-            <h1 className="text-4xl font-bold bg-gradient-to-r from-teal via-yellow to-coral bg-clip-text text-transparent">
-              lethimcook.food
-            </h1>
-          </Card>
-        </button>
+        <Card className="inline-flex items-center justify-center gap-3 backdrop-blur-sm bg-white/90 border border-teal/10 px-6 py-3 shadow-sm hover:shadow-xl">
+          <ChefHat size={32} className="text-teal" />
+          <h1 className="text-4xl font-bold bg-gradient-to-r from-teal via-yellow to-coral bg-clip-text text-transparent">
+            lethimcook.food
+          </h1>
+        </Card>
         
         <p className="text-lg text-dark/80 animate-fade-in">
-          {showFavorites 
-            ? 'Your Favorite Recipes' 
-            : showMyRecipes 
-              ? 'Your Created Recipes'
+          {filters.showFavorites 
+            ? 'Favorite Recipes' 
+            : filters.showMyRecipes 
+              ? 'My Recipes'
               : '✨ Discover recipes with ingredients you already have ✨'}
         </p>
       </div>

@@ -1,14 +1,11 @@
 import { useEffect } from 'react';
 import { useQuery } from 'react-query';
 import { useRecipeStore } from '../stores/useRecipeStore';
-import { searchRecipes, getUserRecipes } from '../api/recipes';
-import { getFavoriteRecipes } from '../api/favorites';
+import { getRecipes } from '../api/recipes';
 
 export function useRecipeData() {
   const {
     filters,
-    showFavorites,
-    showMyRecipes,
     setRecipes,
     setPagination,
     setLoading
@@ -16,38 +13,36 @@ export function useRecipeData() {
 
   const { data, isLoading } = useQuery(
     ['recipes', filters],
-    () => searchRecipes(filters),
+    async () => {
+      setLoading(true);
+      
+      const params = {
+        ingredients: filters.ingredients?.join(','),
+        page: filters.page,
+        exact: filters.exactMatch,
+        showFavorites: filters.showFavorites,
+        showMyRecipes: filters.showMyRecipes
+      };
+      
+      return getRecipes(params);
+    },
     {
-      enabled: !showFavorites && !showMyRecipes && 
-               filters.ingredients?.length > 1,
+      onSuccess: (data) => {
+        setRecipes(data.recipes || []);
+        setPagination(data.pagination || {});
+        setLoading(false);
+      },
+      onError: () => {
+        setRecipes([]);
+        setPagination(null);
+        setLoading(false);
+      }
     }
-  );
-
-  const { data: favoriteData, isLoading: isFavoritesLoading } = useQuery(
-    'favoriteRecipes',
-    getFavoriteRecipes,
-    { enabled: showFavorites }
-  );
-
-  const { data: myRecipesData, isLoading: isMyRecipesLoading } = useQuery(
-    'userRecipes',
-    getUserRecipes,
-    { enabled: showMyRecipes }
   );
 
   useEffect(() => {
-    if (showFavorites && favoriteData) {
-      setRecipes(favoriteData.recipes);
-      setPagination(favoriteData.pagination);
-      setLoading(isFavoritesLoading);
-    } else if (showMyRecipes && myRecipesData) {
-      setRecipes(myRecipesData.recipes);
-      setPagination(myRecipesData.pagination);
-      setLoading(isMyRecipesLoading);
-    } else if (data) {
-      setRecipes(data.recipes);
-      setPagination(data.pagination);
-      setLoading(isLoading);
-    }
-  }, [data, favoriteData, myRecipesData, showFavorites, showMyRecipes]);
+    setLoading(isLoading);
+  }, [isLoading, setLoading]);
+
+  return { isLoading };
 }

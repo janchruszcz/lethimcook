@@ -1,12 +1,14 @@
 import { Recipe, RecipeFilters } from '../types';
 import { api } from './client';
 
-export const searchRecipes = async (filters: RecipeFilters): Promise<Recipe[]> => {
+export const getRecipes = async (filters: RecipeFilters): Promise<Recipe[]> => {
   const { data } = await api.get<Recipe[]>('api/v1/recipes', {
     params: {
-      ingredients: filters.ingredients?.join(','),
+      ingredients: filters.ingredients,
       page: filters.page,
       exact: filters.exactMatch,
+      favorites: filters.showFavorites,
+      my_recipes: filters.showMyRecipes
     },
   });
   return data;

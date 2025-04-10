@@ -33,6 +33,8 @@ export interface RecipeFilters {
   cuisine?: string;
   category?: string;
   exactMatch?: boolean;
+  showFavorites?: boolean;
+  showMyRecipes?: boolean;
 }
 
 export interface PaginationMetadata {
