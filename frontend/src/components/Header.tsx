@@ -1,23 +1,14 @@
 import React from 'react';
 import { ChefHat, UserCircle, LogOut, Heart, Search, Plus, Utensils } from 'lucide-react';
-import { useAuth } from '../contexts/AuthContext';
-import { useToast } from '../contexts/ToastContext';
 import { Button } from './ui/Button';
 import { Card } from './ui/Card';
-
-interface HeaderProps {
-  onLoginClick: () => void;
-  onProfileClick: () => void;
-  showFavorites: boolean;
-  showMyRecipes: boolean;
-  onFavoritesClick: () => void;
-  onMyRecipesClick: () => void;
-  onCreateRecipeClick: () => void;
-}
-
-export function Header({ onLoginClick, onProfileClick, showFavorites, showMyRecipes, onFavoritesClick, onMyRecipesClick, onCreateRecipeClick }: HeaderProps) {
-  const { user, isAuthenticated, logout } = useAuth();
-  const { showToast } = useToast();
+import { useRecipeStore } from '../stores/useRecipeStore';
+import { useAuthStore } from '../stores/useAuthStore';
+import { useModalStore } from '../stores/useModalStore';
+export function Header() {
+  const { isAuthenticated, logout } = useAuthStore();
+  const { showFavorites, showMyRecipes, toggleFavorites, toggleMyRecipes } = useRecipeStore();
+  const { openAuthModal, openCreateRecipeModal, openProfileModal } = useModalStore();
 
   const handleLogout = async () => {
     try {
@@ -37,7 +28,7 @@ export function Header({ onLoginClick, onProfileClick, showFavorites, showMyReci
             <Button
               variant={showFavorites ? "primary" : "ghost"}
               size="sm"
-              onClick={onFavoritesClick}
+              onClick={toggleFavorites}
               className={`group bg-gradient-to-r ${
                 showFavorites 
                   ? 'from-secondary to-primary text-white'
@@ -59,7 +50,7 @@ export function Header({ onLoginClick, onProfileClick, showFavorites, showMyReci
                 <Button
                   variant={showMyRecipes ? "primary" : "ghost"}
                   size="sm"
-                  onClick={onMyRecipesClick}
+                  onClick={toggleMyRecipes}
                   className={`group bg-gradient-to-r ${
                     showMyRecipes 
                       ? 'from-secondary to-primary text-white'
@@ -79,7 +70,7 @@ export function Header({ onLoginClick, onProfileClick, showFavorites, showMyReci
                 <Button
                   variant="ghost"
                   size="sm"
-                  onClick={onCreateRecipeClick}
+                  onClick={openCreateRecipeModal}
                   className="group bg-gradient-to-r from-secondary/10 to-primary/10 hover:from-secondary/20 hover:to-primary/20"
                   title="Create Recipe"
                 >
@@ -99,7 +90,7 @@ export function Header({ onLoginClick, onProfileClick, showFavorites, showMyReci
               <Button
                 variant="ghost"
                 size="sm"
-                onClick={onProfileClick}
+                onClick={openProfileModal}
                 className="group bg-gradient-to-r from-secondary/10 to-primary/10 hover:from-secondary/20 hover:to-primary/20"
                 title="Profile"
               >
@@ -120,7 +111,7 @@ export function Header({ onLoginClick, onProfileClick, showFavorites, showMyReci
               <Button
                 variant="ghost"
                 size="sm"
-                onClick={onLoginClick}
+                onClick={openAuthModal}
                 className="group bg-gradient-to-r from-secondary/10 to-primary/10 hover:from-secondary/20 hover:to-primary/20"
                 title="Login"
               >
@@ -134,7 +125,7 @@ export function Header({ onLoginClick, onProfileClick, showFavorites, showMyReci
       {/* Main Header Content */}
       <div className="text-center space-y-4">
         <button 
-          onClick={() => showFavorites && onFavoritesClick()}
+          onClick={() => showFavorites && toggleFavorites()}
           className="inline-block"
         >
           <Card className="inline-flex items-center justify-center gap-3 backdrop-blur-sm bg-white/90 border border-teal/10 px-6 py-3 shadow-sm hover:shadow-xl">

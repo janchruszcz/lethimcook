@@ -1,14 +1,14 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, ChangeEvent } from 'react';
 import { Plus, Minus, Search as SearchIcon, X } from 'lucide-react';
 import { Modal } from '../ui/Modal';
 import { FormInput } from '../ui/FormInput';
 import { Button } from '../ui/Button';
-import { useToast } from '../../contexts/ToastContext';
 import { createRecipe } from '../../api/recipes';
 import { useQuery } from 'react-query';
 import { searchIngredients } from '../../api/ingredients';
 import { useDebounce } from '../../hooks/useDebounce';
 import { useOnClickOutside } from '../../hooks/useOnClickOutside';
+import { useToastStore } from '../../stores/toastStore';
 
 interface CreateRecipeModalProps {
   isOpen: boolean;
@@ -16,7 +16,7 @@ interface CreateRecipeModalProps {
 }
 
 export function CreateRecipeModal({ isOpen, onClose }: CreateRecipeModalProps) {
-  const { showToast } = useToast();
+  const { toast, showToast } = useToastStore();
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
   const [imageUrl, setImageUrl] = useState('');
@@ -30,6 +30,8 @@ export function CreateRecipeModal({ isOpen, onClose }: CreateRecipeModalProps) {
   const debouncedSearch = useDebounce(searchTerm, 300);
   const searchContainerRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
+  const [mainImage, setMainImage] = useState<File | null>(null);
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   useOnClickOutside(searchContainerRef, () => setIsSearchOpen(false));
 
@@ -79,22 +81,44 @@ export function CreateRecipeModal({ isOpen, onClose }: CreateRecipeModalProps) {
     inputRef.current?.focus();
   };
 
+  const handleFileChange = (e: ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files && e.target.files[0]) {
+      setMainImage(e.target.files[0]);
+      // Create a preview URL for the image
+      setImageUrl(URL.createObjectURL(e.target.files[0]));
+    }
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsSubmitting(true);
 
     try {
-      const recipeData = {
-        title,
-        description,
-        imageUrl,
-        prepTime: parseInt(prepTime, 10),
-        cookTime: parseInt(cookTime, 10),
-        ingredients: ingredients.filter(i => i.trim() !== ''),
-        instructions: instructions.filter(i => i.trim() !== ''),
-      };
+      const formData = new FormData();
+      
+      // Append recipe data
+      formData.append('recipe[title]', title);
+      formData.append('recipe[description]', description);
+      if (prepTime) formData.append('recipe[prep_time]', prepTime);
+      if (cookTime) formData.append('recipe[cook_time]', cookTime);
+      
+      // Append ingredients and instructions as arrays
+      ingredients.filter(i => i.trim() !== '').forEach(ingredient => {
+        formData.append('recipe[ingredient_entries][]', ingredient);
+      });
+      
+      instructions.filter(i => i.trim() !== '').forEach(instruction => {
+        formData.append('recipe[instructions][]', instruction);
+      });
+      
+      // Append image if available
+      if (mainImage) {
+        formData.append('recipe[main_image]', mainImage);
+      } else if (imageUrl) {
+        formData.append('recipe[image_url]', imageUrl);
+      }
 
-      await createRecipe(recipeData);
+      await createRecipe(formData);
       showToast('Recipe created successfully!', 'success');
       onClose();
     } catch (error) {
@@ -141,6 +165,40 @@ export function CreateRecipeModal({ isOpen, onClose }: CreateRecipeModalProps) {
             onChange={setImageUrl}
             placeholder="Enter image URL"
           />
+
+          <div className="space-y-2">
+            <label className="block text-sm font-medium text-gray-700">
+              Upload Image
+            </label>
+            <div className="flex items-center gap-3">
+              <Button
+                type="button"
+                onClick={() => fileInputRef.current?.click()}
+                variant="outline"
+              >
+                Choose File
+              </Button>
+              <span className="text-sm text-gray-500">
+                {mainImage ? mainImage.name : 'No file chosen'}
+              </span>
+              <input
+                ref={fileInputRef}
+                type="file"
+                accept="image/*"
+                onChange={handleFileChange}
+                className="hidden"
+              />
+            </div>
+            {imageUrl && (
+              <div className="mt-2">
+                <img 
+                  src={imageUrl} 
+                  alt="Preview" 
+                  className="h-40 w-auto object-cover rounded-md" 
+                />
+              </div>
+            )}
+          </div>
 
           <FormInput
             type="text"

@@ -1,19 +1,19 @@
 import React, { useState } from 'react';
-import { useAuth } from '../../contexts/AuthContext';
 import { Button } from '../ui/Button';
 import { FormInput } from '../ui/FormInput';
+import { useAuthStore } from '../../stores/useAuthStore';
 
 interface SignupFormProps {
   onSuccess: () => void;
 }
 
 export function SignupForm({ onSuccess }: SignupFormProps) {
-  const { signup } = useAuth();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [passwordConfirmation, setPasswordConfirmation] = useState('');
   const [error, setError] = useState('');
   const [isLoading, setIsLoading] = useState(false);
+  const { register } = useAuthStore();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -21,7 +21,7 @@ export function SignupForm({ onSuccess }: SignupFormProps) {
     setIsLoading(true);
 
     try {
-      await signup(email, password, passwordConfirmation);
+      await register(email, password, passwordConfirmation);
       onSuccess();
     } catch (err) {
       setError('Failed to create account');

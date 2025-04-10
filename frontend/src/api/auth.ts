@@ -1,5 +1,4 @@
 import { api } from './client';
-import { User } from '../types';
 
 export async function login(email: string, password: string): Promise<User> {
   const { data } = await api.post('/login', {
