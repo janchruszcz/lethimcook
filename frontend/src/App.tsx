@@ -1,10 +1,10 @@
-import React, { useState } from 'react';
-import { useQuery } from 'react-query';
+import React from 'react';
 import { Header } from './components/Header';
 import { SearchSection } from './components/search/SearchSection';
 import { useRecipeData } from './hooks/useRecipeData';
-import { ModalContainer } from './components/Modals/ModalContainer';
+import { ModalContainer } from './components/modals/ModalContainer';
 import { RecipeContainer } from './components/recipe/RecipeContainer';
+import { ToastContainer } from './components/toasts/ToastContainer';
 
 export default function App() {
   useRecipeData(); // Handle data fetching and state updates
@@ -16,6 +16,7 @@ export default function App() {
         <SearchSection />
         <RecipeContainer />
         <ModalContainer />
+        <ToastContainer />
       </div>
     </div>
   );

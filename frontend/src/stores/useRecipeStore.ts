@@ -1,6 +1,4 @@
 import { create } from 'zustand';
-import { searchRecipes, getUserRecipes } from '../api/recipes';
-import { getFavoriteRecipes } from '../api/favorites';
 import type { Recipe, RecipeFilters } from '../types';
 
 interface RecipeState {
