@@ -2,6 +2,14 @@ class Api::V1::RecipesController < ApplicationController
   def index
     @recipes = Recipe.includes(:favorites)
 
+    if params[:my_recipes] == 'true'
+      @recipes = @recipes.where(user: current_user)
+    end
+
+    if params[:favorites] == 'true'
+      @recipes = @recipes.where(favorites: { user: current_user })
+    end
+
     if params[:ingredients].present?
       ingredient_names = params[:ingredients].split(',').map(&:strip)
       if params[:exact] == 'true'
@@ -61,10 +69,43 @@ class Api::V1::RecipesController < ApplicationController
     end
   end
 
+  def update
+    @recipe = current_user.recipes.find(params[:id])
+    
+    if @recipe.update(recipe_params)
+      render(
+        json: Panko::Response.create do |r|
+          {
+            success: true,
+            recipe: r.serializer(@recipe, RecipeSerializer, context: { current_user: current_user })
+          }
+        end
+      )
+    else
+      render json: @recipe.errors, status: :unprocessable_entity
+    end
+  end
+
+  def destroy
+    @recipe = current_user.recipes.find(params[:id])
+    @recipe.destroy
+    render json: { success: true }
+  end
+
   private
 
   def recipe_params
-    params.expect(recipe: [:title, :description, :ingredient_entries, :instructions, :image_url, :prep_time, :cook_time, :cuisine, :category, :author])
+    params.expect(recipe: [:title, 
+                           :description, 
+                           :image_url, 
+                           :prep_time, 
+                           :cook_time, 
+                           :cuisine, 
+                           :category, 
+                           :author, 
+                           :main_image,
+                           :ingredient_entries => [],
+                           :instructions => []])
   end
   
 end

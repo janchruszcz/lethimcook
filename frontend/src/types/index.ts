@@ -17,11 +17,13 @@ export interface Recipe {
   imageUrl: string;
   prepTime?: number;
   cookTime?: number;
+  totalTime?: number;
   ratings?: number;
   cuisine?: string;
   category?: string;
   author?: string;
   ingredients: Ingredient[];
+  ingredient_entries: string[];
   userId: number;
   createdAt: string;
   updatedAt: string;

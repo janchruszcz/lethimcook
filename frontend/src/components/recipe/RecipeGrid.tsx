@@ -12,6 +12,7 @@ interface RecipeGridProps {
   selectedIngredientsCount: number;
   onFavoriteToggle?: (recipeId: number, isFavorited: boolean) => void;
   onPageChange: (page: number) => void;
+  onDeleteRecipe: (recipeId: number) => Promise<void>;
 }
 
 export function RecipeGrid({ 
@@ -19,7 +20,8 @@ export function RecipeGrid({
   pagination,
   isLoading, 
   selectedIngredientsCount,
-  onPageChange
+  onPageChange,
+  onDeleteRecipe
 }: RecipeGridProps) {
   if (isLoading) {
     return <LoadingSpinner />;
@@ -36,6 +38,7 @@ export function RecipeGrid({
           <RecipeCard
             key={recipe.id}
             recipe={recipe}
+            onDeleteRecipe={onDeleteRecipe}
           />
         ))}
       </div>

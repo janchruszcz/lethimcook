@@ -19,7 +19,24 @@ export const getRecipe = async (id: number): Promise<Recipe> => {
   return data;
 };
 
-export const createRecipe = async (recipe: Recipe): Promise<Recipe> => {
-  const { data } = await api.post<Recipe>('api/v1/recipes', recipe);
+export const createRecipe = async (formData: FormData): Promise<Recipe> => {
+  const { data } = await api.post<Recipe>('api/v1/recipes', formData, {
+    headers: {
+      'Content-Type': 'multipart/form-data',
+    },
+  });
   return data;
+};
+
+export const updateRecipe = async (id: number, formData: FormData): Promise<Recipe> => {
+  const { data } = await api.put<Recipe>(`api/v1/recipes/${id}`, formData, {
+    headers: {
+      'Content-Type': 'multipart/form-data',
+    },
+  });
+  return data;
+};
+
+export const deleteRecipe = async (id: number): Promise<void> => {
+  await api.delete(`api/v1/recipes/${id}`);
 };

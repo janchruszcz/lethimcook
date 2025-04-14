@@ -7,6 +7,8 @@ class Recipe < ApplicationRecord
   has_many :favorites
   has_many :favorited_by, through: :favorites, source: :user
 
+  has_one_attached :main_image
+
   enum :status, {
     pending: 0,
     completed: 1,

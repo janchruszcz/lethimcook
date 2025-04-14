@@ -1,9 +1,21 @@
 class RecipeSerializer < Panko::Serializer
   attributes :id, :title, :description, :ingredient_entries, :instructions, :image_url, 
              :prep_time, :cook_time, :total_time, :ratings, :ingredients,
-             :cuisine, :category, :author, :is_favorite
+             :cuisine, :category, :author, :is_favorite, :main_image
 
   #has_many :ingredients, serializer: IngredientSerializer
+
+  def main_image
+    if object.main_image.attached?
+      Rails.application.routes.url_helpers.url_for(object.main_image)
+    else
+      "https://chilitonka.com/wp-content/uploads/2013/09/curry-ct2867.jpg"
+    end
+  end
+
+  def image_url
+    object.image_url.presence || "https://chilitonka.com/wp-content/uploads/2013/09/curry-ct2867.jpg"
+  end
 
   def ingredients
     []
@@ -14,7 +26,7 @@ class RecipeSerializer < Panko::Serializer
   end
 
   def instructions
-    ['Cook', 'Eat', 'Refactor']
+    object.instructions.presence || []
   end
 
   def description
