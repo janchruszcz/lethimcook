@@ -58,16 +58,16 @@ class Api::V1::RecipesControllerTest < ActionDispatch::IntegrationTest
   end
 
   test "should update recipe" do
-    patch api_v1_recipe_url(@recipe), params: { recipe: { title: "Updated Title", instructions: "New instructions." } }, as: :json
+    patch api_v1_recipe_url(@recipe), params: { recipe: { title: "Updated Title", ingredient_entries: ["tomato", "garlic"] } }, as: :json
     assert_response :success
 
     response_body = JSON.parse(response.body)
     assert response_body["success"]
     assert_equal "Updated Title", response_body["recipe"]["title"]
-
+    assert_equal ["tomato", "garlic"], response_body["recipe"]["ingredient_entries"]
     @recipe.reload
     assert_equal "Updated Title", @recipe.title
-    assert_equal "New instructions.", @recipe.instructions
+    assert_equal ["tomato", "garlic"], @recipe.ingredient_entries
   end
 
   test "should not update recipe with invalid data" do
