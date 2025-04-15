@@ -9,11 +9,11 @@ Note: This is a work in progress. Initial load - first query to API takes a whil
 ### 🔍 Smart Recipe Search
 > Search by ingredients (with autocomplete) using full-text PostgreSQL search.
 
-### 📝 Auth & Favorites
-> Users can sign up, create recipes, save favorite ones, and generate AI recipes.
-
 ### 🪄 AI-Powered Recipes
-> Describe what ingredients you have, and Claude (Mario) will cook a recipe just for you.
+> Describe what ingredients you have, and Mario will cook a recipe just for you.
+
+### 📝 Auth & Favorites
+> Users can sign up, create recipes, save favorite ones
 
 ### ⛓️ Backend API (Rails 8)
 - PostgreSQL with pg_search (possible migration to ElasticSearch in the future)
@@ -72,15 +72,21 @@ Note: This is a work in progress. Initial load - first query to API takes a whil
 ## 🗺️ Roadmap
 
 ### User Profile
-- Good-looking user profile page (probably modal)
+- Good-looking user profile page (modal)
 - Favorite ingredients/cuisines
-- Reward/achievement system (gamification) - coins/points for creating a recipe and when it's getting favorited by other users etc.
+- Reward/achievement system - coins/points for creating a recipe and when it's getting favorited by other users etc.
 
-### Groceries provider integration - order ingredients for your favorite recipes
+### Groceries
+- Research groceries vs delivery provider integration
+- Order favorite/frequently used ingredients
+- Pantry - favorite/frequently used ingredients - possible AI suggestions on what to refill soon etc. (FRIDGE-AI)
 
 ### Recipes 
 - Generate recipe image
-- 
+- Generate recipe based on macros (kcal, proteins, carbs, fats)
+- Generate whole eating plan (recipes) for i.e. one week based on macros/ingredients
+- Ranking - most favorited / best rated recipes should appear on the top of the list
+- Analyze favorite vs rating
 
 ## 🚦 Getting Started
 
@@ -143,14 +149,7 @@ docker run -d -p 80:80 -e RAILS_MASTER_KEY=<your-master-key> --name lethimcook l
 
 ## 📝 API Documentation
 
-### Endpoints
-
-- `GET /api/v1/recipes` - List recipes with optional ingredient filters
-- `GET /api/v1/recipes/:id` - Get detailed recipe information
-- `GET /api/v1/ingredients/search` - Search ingredients
-- `GET /api/v1/favorites` - List favorites
-- `POST /api/v1/favorites` - Create a favorite
-- `DELETE /api/v1/favorites/:id` - Delete a favorite
+[Read here.](./api/README.md)
 
 ## 🔐 Environment Variables
 
