@@ -20,8 +20,12 @@ const config: Config = {
       tsconfig: 'tsconfig.app.json', // Make sure this points to your TS config for the app
     }],
   },
-  // Ignore transform for node_modules, except for specific modules if needed
-  transformIgnorePatterns: ['/node_modules/'],
+  // Ignore transform for node_modules, except for specific ES Modules like clsx
+  // Use a single pattern with negative lookahead for better compatibility
+  transformIgnorePatterns: [
+    '/node_modules/(?!(clsx))/' 
+    // Add other exceptions here if needed, e.g., '/node_modules/(?!(clsx|other-es-module))/'
+  ],
   verbose: true,
   // Automatically clear mock calls and instances between every test
   clearMocks: true,
