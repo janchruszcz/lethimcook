@@ -26,6 +26,7 @@ api/config/credentials/*.key
 
 # Frontend
 frontend/.env*
+frontend/coverage
 
 # Logs
 frontend/logs
