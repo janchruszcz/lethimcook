@@ -9,7 +9,12 @@ Note: This is a work in progress. Initial load - first query to API takes a whil
 ### 🔍 Smart Recipe Search
 > Search by ingredients (with autocomplete) using full-text PostgreSQL search.
 
+
+
 ### 🪄 AI-Powered Recipes
+
+![mario2](https://github.com/user-attachments/assets/c1167cfc-e5fd-42d0-b495-24f1c6252987)
+
 > Describe what ingredients you have, and Mario will cook a recipe just for you.
 
 ### 📝 Auth & Favorites
