@@ -54,16 +54,19 @@ class UserTest < ActiveSupport::TestCase
   end
 
   test "destroying user destroys associated favorites" do
-    # First create a favorite for our test user
-    @user.favorites.create(recipe: recipes(:spaghetti_carbonara))
+    # The favorite is already created by the fixture 'john_carbonara'
+    # Remove the line below as it attempts to create a duplicate:
+    # @user.favorites.create(recipe: recipes(:spaghetti_carbonara)) 
     
+    # Assert that destroying the user removes the one favorite loaded from fixtures
     assert_difference "Favorite.count", -1 do
       @user.destroy
     end
   end
 
   test "can favorite a recipe" do
-    recipe = recipes(:spaghetti_carbonara)
+    # Use a recipe that isn't already favorited by 'john' in the fixtures
+    recipe = recipes(:tomato_soup) 
     
     assert_difference "Favorite.count" do
       @user.favorites.create(recipe: recipe)

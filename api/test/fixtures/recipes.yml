@@ -39,6 +39,6 @@ chicken_curry:
   cuisine: Indian
   category: Main Course
   author: Chef Sharma
-  user: john
+  user: jane
   created_at: <%= Time.current %>
   updated_at: <%= Time.current %>

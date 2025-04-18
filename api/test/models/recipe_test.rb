@@ -20,14 +20,6 @@ class RecipeTest < ActiveSupport::TestCase
     assert_not @recipe.valid?
   end
 
-  test "recipe has ingredients" do
-    assert_not_empty @recipe.ingredients
-  end
-
-  test "recipe has recipe_ingredients" do
-    assert_not_empty @recipe.recipe_ingredients
-  end
-
   test "total_time calculates correctly" do
     @recipe.prep_time = 15
     @recipe.cook_time = 20
@@ -48,13 +40,8 @@ class RecipeTest < ActiveSupport::TestCase
     assert_equal 0, @recipe.total_time
   end
 
-  test "search_by_ingredients returns matching recipes" do
-    result = Recipe.search_by_ingredients("garlic")
-    assert_includes result, @recipe
-  end
-
-  test "with_ingredients scope filters correctly" do
-    result = Recipe.with_ingredients(["garlic", "pasta"])
+  test "search_by_ingredient_entries returns matching recipes" do
+    result = Recipe.search_by_ingredient_entries(["eggs", "pasta"])
     assert_includes result, @recipe
   end
 

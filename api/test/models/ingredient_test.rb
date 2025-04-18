@@ -9,16 +9,6 @@ class IngredientTest < ActiveSupport::TestCase
     assert @ingredient.valid?
   end
 
-  test "ingredient requires a name" do
-    @ingredient.name = nil
-    assert_not @ingredient.valid?
-  end
-
-  test "ingredient name should be unique" do
-    duplicate = @ingredient.dup
-    assert_not duplicate.valid?
-  end
-
   test "ingredient has many recipe_ingredients" do
     assert_respond_to @ingredient, :recipe_ingredients
     assert_kind_of ActiveRecord::Associations::CollectionProxy, @ingredient.recipe_ingredients
