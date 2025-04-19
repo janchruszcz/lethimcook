@@ -9,8 +9,6 @@ Note: This is a work in progress. Initial load - first query to API takes a whil
 ### 🔍 Smart Recipe Search
 > Search by ingredients (with autocomplete) using full-text PostgreSQL search.
 
-
-
 ### 🪄 AI-Powered Recipes
 
 ![mario2](https://github.com/user-attachments/assets/c1167cfc-e5fd-42d0-b495-24f1c6252987)
@@ -28,10 +26,10 @@ Note: This is a work in progress. Initial load - first query to API takes a whil
 - Pagy for pagination (better performance)
 - Anthropic for AI
 - Fully versioned (`/api/v1`)
-- Background jobs for AI generation
+- Background jobs (Solid Queue) for AI generation
 - Service objects and serializers for clean code separation
 
-### 💻 Frontend (React 18 + TS)
+### 💻 Frontend (React 18, TypeScript)
 - Component-based architecture
 - Zustand for state management (lightweight, better performance, less code)
 - React Query for fast API access
@@ -54,6 +52,51 @@ Note: This is a work in progress. Initial load - first query to API takes a whil
     └── types/             # TypeScript type definitions
 ```
 
+## Technical Considerations & Improvements
+
+### Database & Backend
+
+- Recipe many-to-many relationship with Ingredients via RecipeIngredients is a relic of initial database structure and intial app idea. Currently we use ingredient_entries(string[]) column in recipes table to give users full freedom of input (simplicity and rapidness of development was also important here). In the future we might consider scanning these entries to extract the ingredient and create the relationship, which then would allow us to do more fancy stuff in terms of UX (e.g. ingredient unit/alias) or more professional in terms of engineering (e.g. easier recipes grouping, without need to do a full-text search).
+
+- Favorite is a separate model because in the future we would like to have favorite ingredients/cuisines also (see Product Roadmap).
+
+- If there is any Rails validation on a model - it's probably to make tests green. We either shouldn't allow user to input wrong data (frontend validation) or should have db restrictions (e.g. constraints) to not accept it. This approach was recommended by DHH.
+
+- Consider migrating from pg_search to ElasticSearch for ...
+
+- Increase test coverage. Crucial parts are rather covered, but it is always good for better coverage.
+
+- Implement server-side caching.
+
+### Frontend
+
+- Zustand, React Query (query instead of state manipulation) (resets pagination)
+
+- React Query caching optimizations
+
+- Increase test coverage, frontend test suite is very basic at the moment
+
+## 🗺️ Product Roadmap
+
+### User Profile
+- Good-looking user profile page (modal)
+- Favorite ingredients/cuisines
+- Reward/achievement system - coins/points for creating a recipe and when it's getting favorited by other users etc.
+
+### Groceries
+- Research groceries vs delivery provider integration
+- Order favorite/frequently used ingredients
+- Pantry - favorite/frequently used ingredients - possible AI suggestions on what to refill soon etc. (FRIDGE-AI)
+
+### Recipes
+- Fancy-o-meter - how fancy/spicy generated recipe should be - user config for generated recipes
+- Generate recipe image
+- Friendly urls
+- Generate recipe based on macros (kcal, proteins, carbs, fats)
+- Generate whole eating plan (recipes) for i.e. one week based on macros/ingredients
+- Ranking - most favorited / best rated recipes should appear on the top of the list
+- Analyze favorite vs rating
+
 ## 👨‍🍳 User Stories
 
 ### Recipe Discovery
@@ -73,25 +116,6 @@ Note: This is a work in progress. Initial load - first query to API takes a whil
 ### Social Features
 - As a user, I want to see recipe ratings, so I can choose well-tested recipes
 - As a community member, I want to see who authored the recipe, so I can find more recipes from creators I trust
-
-## 🗺️ Roadmap
-
-### User Profile
-- Good-looking user profile page (modal)
-- Favorite ingredients/cuisines
-- Reward/achievement system - coins/points for creating a recipe and when it's getting favorited by other users etc.
-
-### Groceries
-- Research groceries vs delivery provider integration
-- Order favorite/frequently used ingredients
-- Pantry - favorite/frequently used ingredients - possible AI suggestions on what to refill soon etc. (FRIDGE-AI)
-
-### Recipes 
-- Generate recipe image
-- Generate recipe based on macros (kcal, proteins, carbs, fats)
-- Generate whole eating plan (recipes) for i.e. one week based on macros/ingredients
-- Ranking - most favorited / best rated recipes should appear on the top of the list
-- Analyze favorite vs rating
 
 ## 🚦 Getting Started
 
@@ -170,6 +194,7 @@ DATABASE_URL=<your-database-url>
 
 ```bash
 # Frontend tests
+cd frontend
 npm run test
 
 # Backend tests
