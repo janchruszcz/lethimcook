@@ -5,7 +5,7 @@ import { EmptyState } from '../ui/EmptyState';
 import { LoadingSpinner } from '../ui/LoadingSpinner';
 import { Pagination } from '../ui/Pagination';
 
-interface RecipeGridProps {
+export interface RecipeGridProps {
   recipes: Recipe[];
   pagination?: PaginationMetadata;
   isLoading: boolean;

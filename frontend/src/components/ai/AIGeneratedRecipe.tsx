@@ -15,7 +15,7 @@ export function AIGeneratedRecipe({ recipe, onFavoriteToggle, isFavorited }: AIG
     <div className="space-y-6">
       <div className="relative h-64">
         <img
-          src={recipe.imageUrl}
+          src={'https://images.unsplash.com/photo-1589302168068-964664d93dc0?w=900&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8NHx8Y2hpY2tlbiUyMHJpY2V8ZW58MHx8MHx8fDI%3D'}
           alt={recipe.title}
           className="w-full h-full object-cover rounded-lg"
         />

@@ -89,7 +89,7 @@ export function RecipeCard({ recipe, onDeleteRecipe }: RecipeCardProps) {
             )}
             <div className="flex items-center gap-2">
               <Button
-                variant="primary"
+                variant="ghost"
                 size="sm"
                 onClick={handleDeleteRecipe}
                 className="ml-auto text-xs"
@@ -97,7 +97,7 @@ export function RecipeCard({ recipe, onDeleteRecipe }: RecipeCardProps) {
                 <Trash size={16} />
               </Button>
               <Button
-                variant="primary"
+                variant="ghost"
                 size="sm"
                 onClick={() => setShowEditModal(true)}
                 className="ml-auto text-xs"
@@ -105,7 +105,7 @@ export function RecipeCard({ recipe, onDeleteRecipe }: RecipeCardProps) {
                 <Edit size={16} />
               </Button>
               <Button
-                variant="primary"
+                variant="ghost"
                 size="sm"
                 onClick={() => setShowViewModal(true)}
                 className="ml-auto text-xs"

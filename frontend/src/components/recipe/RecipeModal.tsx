@@ -23,7 +23,7 @@ export function RecipeModal({ recipe, isOpen, onClose, onFavoriteToggle, isFavor
           </h2>
           <div className="flex gap-2">
             <FavoriteButton
-              isFavorited={recipe.is_favorite}
+              isFavorited={isFavorited}
               onToggle={onFavoriteToggle}
               className="bg-white/90 hover:bg-white"
             />
@@ -38,7 +38,7 @@ export function RecipeModal({ recipe, isOpen, onClose, onFavoriteToggle, isFavor
 
         <div className="relative h-64">
           <img
-            src={recipe.imageUrl}
+            src={recipe.main_image}
             alt={recipe.title}
             className="w-full h-full object-cover"
           />

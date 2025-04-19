@@ -41,7 +41,7 @@ export function EditRecipeModal({ recipe, isOpen, onClose }: EditRecipeModalProp
         initialData={recipe}
         onSubmit={handleSubmit}
         isSubmitting={isSubmitting}
-        submitButtonText={isSubmitting ? 'Saving...' : 'Save Changes'}
+        submitButtonText={isSubmitting ? 'Saving...' : 'Update'}
       />
     </Modal>
   );

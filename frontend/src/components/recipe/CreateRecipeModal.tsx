@@ -38,7 +38,7 @@ export function CreateRecipeModal({ isOpen, onClose }: CreateRecipeModalProps) {
       <RecipeForm
         onSubmit={handleSubmit}
         isSubmitting={isSubmitting}
-        submitButtonText={isSubmitting ? 'Creating...' : 'Create Recipe'}
+        submitButtonText={isSubmitting ? 'Creating...' : 'Create'}
       />
     </Modal>
   );
