@@ -7,6 +7,9 @@ Note: This is a work in progress. Initial load - first query to API takes a whil
 ## 🧠 Key Features
 
 ### 🔍 Smart Recipe Search
+
+![search](https://github.com/user-attachments/assets/7175ca89-85c7-438e-9104-4089e99c3e82)
+
 > Search by ingredients (with autocomplete) using full-text PostgreSQL search.
 
 ### 🪄 AI-Powered Recipes
