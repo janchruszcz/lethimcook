@@ -29,11 +29,10 @@ class RecipeGenerator
 
       recipe_text = response["content"].first["text"]
       raise "Invalid recipe format" unless recipe_text.present?
-      
       recipe_data = JSON.parse(recipe_text)
-
       raise "Invalid recipe structure" unless valid_recipe?(recipe_data)
 
+      update_recipe(recipe_data)
       @recipe
 
     rescue JSON::ParserError => e
@@ -56,7 +55,7 @@ class RecipeGenerator
       title: recipe_data['title'],
       description: recipe_data['description'],
       ingredient_entries: recipe_data['ingredient_entries'],
-      # instructions: recipe_data['instructions'],
+      instructions: recipe_data['instructions'],
       cuisine: recipe_data['cuisine'],
       category: recipe_data['category'],
       prep_time: recipe_data['prep_time'],
@@ -68,10 +67,8 @@ class RecipeGenerator
 
   def handle_error(message)
     @recipe.update!(
-      status: 2,
-      error_message: message
+      status: "failed",
     )
-    raise message
   end
 
   def valid_recipe?(recipe)

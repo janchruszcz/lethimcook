@@ -53,6 +53,7 @@ group :development, :test do
 
   # Use Minitest for testing
   gem "minitest"
+  gem "mocha"
 end
 
 

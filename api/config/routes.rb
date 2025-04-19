@@ -34,9 +34,9 @@ Rails.application.routes.draw do
           get 'search'
         end
       end
-      resources :favorites, only: [:index, :create, :destroy]
-      post 'ai/generate_recipe', to: 'ai_chef#generate_recipe'
-      get 'ai/recipe_status/:recipe_id', to: 'ai_chef#recipe_status'
+      resources :favorites, only: [:create, :destroy]
+      post 'ai_chef/generate_recipe', to: 'ai_chef#generate_recipe'
+      get 'ai_chef/recipe_status/:recipe_id', to: 'ai_chef#recipe_status', as: 'ai_chef_recipe_status'
     end
   end
 end

@@ -3,7 +3,7 @@ require "test_helper"
 class Api::V1::IngredientsControllerTest < ActionDispatch::IntegrationTest
   setup do
     @user = users(:john)
-    sign_in @user
+    login_as(@user)
     
     @garlic = ingredients(:garlic)
     @tomato = ingredients(:tomato)

@@ -159,6 +159,8 @@ GEM
     marcel (1.0.4)
     mini_mime (1.1.5)
     minitest (5.25.2)
+    mocha (2.7.1)
+      ruby2_keywords (>= 0.0.5)
     multipart-post (2.4.1)
     net-http (0.6.0)
       uri
@@ -280,6 +282,7 @@ GEM
       rubocop-performance
       rubocop-rails
     ruby-progressbar (1.13.0)
+    ruby2_keywords (0.0.5)
     securerandom (0.3.2)
     solid_cache (1.0.6)
       activejob (>= 7.2)
@@ -331,6 +334,7 @@ DEPENDENCIES
   dotenv
   kamal
   minitest
+  mocha
   pagy
   panko_serializer!
   pg (~> 1.1)

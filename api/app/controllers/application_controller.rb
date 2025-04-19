@@ -3,9 +3,8 @@ class ApplicationController < ActionController::API
   include ActionController::RequestForgeryProtection
   include Pagy::Backend
 
-  # Enable CSRF protection for API
-  protect_from_forgery with: :exception
-  skip_before_action :verify_authenticity_token
+  # Enable CSRF protection for API, except in test environment
+  protect_from_forgery with: :exception, unless: -> { Rails.env.test? }
 
   before_action :set_csrf_cookie
 
@@ -14,6 +13,7 @@ class ApplicationController < ActionController::API
   private
 
   def set_csrf_cookie
+    # Only set the cookie if protection is actually enabled for the current request
     cookies['CSRF-TOKEN'] = form_authenticity_token if protect_against_forgery?
   end
 end

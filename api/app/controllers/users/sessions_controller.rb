@@ -1,13 +1,11 @@
 class Users::SessionsController < Devise::SessionsController
   respond_to :json
-  #skip_before_action :verify_authenticity_token
-  #before_action :configure_sign_in_params, only: [:create]
 
-  def create
-    Rails.logger.info "Login attempt for email: #{params.dig(:user, :email)}"
-    
-    self.resource = warden.authenticate!(:database_authenticatable)
-    Rails.logger.info "Authentication result: #{resource.inspect}"
+  # Skip methods or callbacks that rely on flash
+  skip_before_action :verify_signed_out_user, only: :destroy
+
+  def create    
+    self.resource = warden.authenticate(:database_authenticatable)
     
     if resource
       sign_in(resource_name, resource)
@@ -25,9 +23,6 @@ class Users::SessionsController < Devise::SessionsController
   end
 
   def respond_with(resource, _opts = {})
-    Rails.logger.info "Respond_with called with resource: #{resource.inspect}"
-    Rails.logger.info "Current user: #{current_user.inspect}"
-    
     if resource.persisted? && current_user
       render json: {
         status: { code: 200, message: 'Logged in successfully' },
@@ -40,24 +35,31 @@ class Users::SessionsController < Devise::SessionsController
     end
   end
 
-  def destroy
-    Rails.logger.info "Destroy action called"
-    Rails.logger.info "Current user before sign out: #{current_user.inspect}"
-
-    # Get the current signed-in user before we sign them out
-    signed_out = (Devise.sign_out_all_scopes ? sign_out : sign_out(resource_name))
-    
-    if signed_out
+  def destroy    
+    if warden.authenticated?(:user) 
+      Rails.logger.info "User authenticated, attempting sign out: #{current_user.inspect}"
+      sign_out(current_user)
+      
       render json: {
         status: 200,
         message: "Logged out successfully"
       }, status: :ok
     else
+      # No user signed in or session invalid
+      Rails.logger.info "No active session found for logout"
       render json: {
         status: 401,
         message: "No active session"
       }, status: :unauthorized
     end
+  end
+
+  # Override methods that use flash
+  def respond_to_on_destroy
+    render json: {
+      status: 200,
+      message: "Logged out successfully"
+    }, status: :ok
   end
 
   private

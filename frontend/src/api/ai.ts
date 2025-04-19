@@ -8,13 +8,13 @@ interface GenerateRecipeResponse {
 }
 
 export async function generateRecipe(ingredients: string[]): Promise<string> {
-  const { data } = await api.post<{ recipeId: string }>('/api/v1/ai/generate_recipe', {
+  const { data } = await api.post<{ recipeId: string }>('/api/v1/ai_chef/generate_recipe', {
     ingredients
   });
   return data.recipeId;
 }
 
 export async function checkRecipeStatus(recipeId: string): Promise<GenerateRecipeResponse> {
-  const { data } = await api.get<GenerateRecipeResponse>(`/api/v1/ai/recipe_status/${recipeId}`);
+  const { data } = await api.get<GenerateRecipeResponse>(`/api/v1/ai_chef/recipe_status/${recipeId}`);
   return data;
 }

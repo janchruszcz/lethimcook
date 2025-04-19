@@ -2,9 +2,10 @@ class Recipe < ApplicationRecord
   include PgSearch::Model
 
   belongs_to :user
+
   has_many :recipe_ingredients, dependent: :destroy
   has_many :ingredients, through: :recipe_ingredients
-  has_many :favorites
+  has_many :favorites, dependent: :destroy
   has_many :favorited_by, through: :favorites, source: :user
 
   has_one_attached :main_image
@@ -15,6 +16,10 @@ class Recipe < ApplicationRecord
     failed: 2
   }
 
+  # Validations
+  validates :title, presence: true
+
+  # Search
   pg_search_scope :search_by_ingredients, 
     associated_against: {
       ingredients: :name

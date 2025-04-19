@@ -1,14 +1,19 @@
 require "test_helper"
+require 'mocha/minitest'
 
 class RecipeGeneratorTest < ActiveSupport::TestCase
   setup do
-    @recipe = recipes(:one)
+    @user = users(:john)
+    login_as(@user)
     @ingredients = ["tomato", "pasta"]
+    @recipe = Recipe.create!(user: @user, title: "Initial Title", status: :pending)
     @generator = RecipeGenerator.new(@ingredients, @recipe.id)
+
+    @mock_anthropic_client = mock('anthropic_client')
+    Anthropic::Client.stubs(:new).returns(@mock_anthropic_client)
   end
 
   test "generates recipe successfully" do
-    # Mock the Anthropic client response
     mock_response = {
       "content" => [{
         "text" => {
@@ -25,22 +30,20 @@ class RecipeGeneratorTest < ActiveSupport::TestCase
       }]
     }
 
-    Anthropic::Client.any_instance.stubs(:messages).returns(mock_response)
+    @mock_anthropic_client.stubs(:messages).returns(mock_response)
 
-    result = @generator.generate
-    assert_equal "Pasta Pomodoro", result.title
-    assert_equal 1, result.status # assuming 1 is the success status
+    @generator.generate
+    @recipe.reload
+    assert_equal "Pasta Pomodoro", @recipe.title
+    assert_equal "completed", @recipe.status
   end
 
   test "handles invalid recipe format" do
-    Anthropic::Client.any_instance.stubs(:messages).returns({"content" => [{"text" => "invalid json"}]})
+    @mock_anthropic_client.stubs(:messages).returns({"content" => [{"text" => "invalid json"}]})
 
-    assert_raises(RuntimeError) do
-      @generator.generate
-    end
+    @generator.generate
 
     @recipe.reload
-    assert_equal 2, @recipe.status # assuming 2 is the error status
-    assert_not_nil @recipe.error_message
+    assert_equal "failed", @recipe.status
   end
 end

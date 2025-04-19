@@ -1,45 +1,46 @@
-
 class Api::V1::FavoritesController < ApplicationController
   before_action :authenticate_user!
-  
-  def index
-    @favorite_recipes = current_user.favorite_recipes
-
-    pagy, @favorite_recipes = pagy(@favorite_recipes)
-
-    render json: Panko::Response.new(
-      success: true,
-      recipes: Panko::ArraySerializer.new(
-        @favorite_recipes,
-        each_serializer: RecipeSerializer,
-        context: {
-          current_user: current_user
-        }
-      ),
-      pagination: {
-        page: pagy.page,
-        pages: pagy.pages,
-        count: pagy.count,
-        items: pagy.limit
-      }
-    )
-  end
+  before_action :set_recipe, only: [:create, :destroy]
 
   def create
-    recipe = Recipe.find(params[:recipe_id])
-    current_user.favorites.create!(recipe: recipe)
-    render json: Panko::Response.new(
-      success: true,
-      favorited: true
-    )
+    if current_user.favorites.create!(recipe: @recipe)
+      render json: Panko::Response.new(
+        success: true
+      )
+    else
+      render json: Panko::Response.new(
+        success: false,
+        error: "Failed to favorite recipe"
+      )
+    end
   end
 
   def destroy
-    recipe = Recipe.find(params[:id])
-    current_user.favorites.find_by(recipe: recipe).destroy
-    render json: Panko::Response.new(
-      success: true,
-      favorited: false
-    )
+    favorite = current_user&.favorites&.find_by(recipe: @recipe)
+
+    if favorite
+      begin
+        favorite.destroy!
+        render json: Panko::Response.new(
+          success: true
+        )
+      rescue ActiveRecord::RecordNotDestroyed => e
+        render json: Panko::Response.new(
+          success: false,
+          error: "Failed to unfavorite recipe: #{e.message}"
+        ), status: :unprocessable_entity
+      end
+    else
+      render json: Panko::Response.new(
+        success: false,
+        error: "Favorite not found"
+      ), status: :not_found
+    end
+  end
+
+  private
+
+  def set_recipe
+    @recipe = Recipe.find(params[:id])
   end
 end

@@ -65,7 +65,7 @@ class Api::V1::RecipesController < ApplicationController
         end
       )
     else
-      render json: @recipe.errors, status: :unprocessable_entity
+      render json: { success: false, errors: @recipe.errors }, status: :unprocessable_entity
     end
   end
 
@@ -82,7 +82,7 @@ class Api::V1::RecipesController < ApplicationController
         end
       )
     else
-      render json: @recipe.errors, status: :unprocessable_entity
+      render json: { success: false, errors: @recipe.errors }, status: :unprocessable_entity
     end
   end
 
