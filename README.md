@@ -73,6 +73,8 @@ Note: This is a work in progress. Initial load - first query to API takes a whil
 
 ### Frontend
 
+- Review existing types, add missing ones.
+
 - Increase test coverage, frontend test suite is very basic at the moment.
 
 ## 🗺️ Product Roadmap

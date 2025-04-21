@@ -32,6 +32,7 @@ export function Header() {
               variant={filters.showFavorites ? "primary" : "ghost"}
               size="sm"
               onClick={toggleFavorites}
+              disabled={!isAuthenticated}
               className={`group bg-gradient-to-r ${
                 filters.showFavorites 
                   ? 'from-secondary to-primary text-white'
