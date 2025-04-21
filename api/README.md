@@ -4,7 +4,7 @@ This document provides details about the API endpoints for the lethimcook.food a
 
 ## Authentication
 
-Most endpoints that involve user-specific data (creating recipes, managing favorites) require authentication. Authentication is handled via Devise, likely using session cookies or tokens. Authenticated endpoints will require appropriate credentials (e.g., a valid `Authorization` header or session cookie). Requests requiring authentication that fail will typically return a `401 Unauthorized` status.
+Most endpoints that involve user-specific data (creating recipes, managing favorites) require authentication. Authentication is handled via Devise (session-based). Authenticated endpoints will require appropriate credentials (session cookie). Requests requiring authentication that fail will typically return a `401 Unauthorized` status.
 
 Endpoints are prefixed with `/api/v1`.
 
@@ -225,14 +225,6 @@ Endpoints are prefixed with `/api/v1`.
     ```
 
 ### Favorites
-
-#### `GET /api/v1/favorites`
-
-*   **Description**: Retrieves a paginated list of the authenticated user's favorite recipes.
-*   **Authentication**: Required.
-*   **Query Parameters**:
-    *   `page` (Integer, optional): The page number for pagination.
-*   **Successful Response (200 OK)**: Same format as `GET /api/v1/recipes`, containing the user's favorite recipes.
 
 #### `POST /api/v1/favorites`
 

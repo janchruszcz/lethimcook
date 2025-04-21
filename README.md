@@ -1,6 +1,6 @@
 # 👨‍🍳 lethimcook.food - recipe finder
 
-A meme-inspired, modern recipe finder application that helps you discover recipes based on ingredients you have at home. Built with React, TypeScript, and Ruby on Rails.
+✨ A meme-inspired, modern recipe finder application that helps you discover recipes based on ingredients you have at home. Built with React, TypeScript, and Ruby on Rails 🍝
 
 Note: This is a work in progress. Initial load - first query to API takes a while because of fly.io setup.
 
@@ -28,14 +28,14 @@ Note: This is a work in progress. Initial load - first query to API takes a whil
 - Panko Serializer for JSON serialization (better performance)
 - Pagy for pagination (better performance)
 - Anthropic for AI
-- Fully versioned (`/api/v1`)
+- RESTful API design with versioning (`/api/v1`)
 - Background jobs (Solid Queue) for AI generation
 - Service objects and serializers for clean code separation
 
 ### 💻 Frontend (React 18, TypeScript)
 - Component-based architecture
 - Zustand for state management (lightweight, better performance, less code)
-- React Query for fast API access
+- React Query for data fetching with optimized caching strategies for better UX and reduced API calls
 - Tailwind CSS for modern responsive UI
 - Axios for API communication
 - Vite as build tool
@@ -55,29 +55,25 @@ Note: This is a work in progress. Initial load - first query to API takes a whil
     └── types/             # TypeScript type definitions
 ```
 
-## Technical Considerations & Improvements
+## 🔧 Technical Considerations, Notes & Improvements
 
 ### Database & Backend
 
-- Recipe many-to-many relationship with Ingredients via RecipeIngredients is a relic of initial database structure and intial app idea. Currently we use ingredient_entries(string[]) column in recipes table to give users full freedom of input (simplicity and rapidness of development was also important here). In the future we might consider scanning these entries to extract the ingredient and create the relationship, which then would allow us to do more fancy stuff in terms of UX (e.g. ingredient unit/alias) or more professional in terms of engineering (e.g. easier recipes grouping, without need to do a full-text search).
+- Recipe many-to-many relationship with Ingredients via RecipeIngredients is a relic of initial database structure and initial app idea. Currently we use ingredient_entries(string[]) column in recipes table to give users full freedom of input (simplicity and rapidness of development was also important here). In the future we might consider scanning these entries to extract the ingredient and create the relationship, which then would allow us to do more fancy stuff in terms of UX (e.g. ingredient unit/alias) or more professional in terms of engineering (e.g. easier recipes grouping, without need to do a full-text search).
 
 - Favorite is a separate model because in the future we would like to have favorite ingredients/cuisines also (see Product Roadmap).
 
-- If there is any Rails validation on a model - it's probably to make tests green. We either shouldn't allow user to input wrong data (frontend validation) or should have db restrictions (e.g. constraints) to not accept it. This approach was recommended by DHH.
+- Some Rails model validations exist primarily to support test cases — input validation is mostly delegated to the frontend or database constraints. This approach was recommended by DHH.
 
-- Consider migrating from pg_search to ElasticSearch for ...
+- Consider migrating from pg_search to ElasticSearch.
 
-- Increase test coverage. Crucial parts are rather covered, but it is always good for better coverage.
+- Increase test coverage. Crucial parts are rather covered, but it is always good to aim for better coverage.
 
 - Implement server-side caching.
 
 ### Frontend
 
-- Zustand, React Query (query instead of state manipulation) (resets pagination)
-
-- React Query caching optimizations
-
-- Increase test coverage, frontend test suite is very basic at the moment
+- Increase test coverage, frontend test suite is very basic at the moment.
 
 ## 🗺️ Product Roadmap
 
