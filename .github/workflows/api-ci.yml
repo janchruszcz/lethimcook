@@ -24,7 +24,7 @@ jobs:
       - name: Set up Ruby
         uses: ruby/setup-ruby@v1
         with:
-          ruby-version-file: 'api/.ruby-version'
+          ruby-version: '3.2.2'
           bundler-cache: true
 
       - name: Scan for common Rails security vulnerabilities using static analysis
@@ -42,7 +42,7 @@ jobs:
       - name: Set up Ruby
         uses: ruby/setup-ruby@v1
         with:
-          ruby-version-file: 'api/.ruby-version'
+          ruby-version: '3.2.2'
           bundler-cache: true
 
       - name: Lint code for consistent style
@@ -60,7 +60,7 @@ jobs:
       - name: Set up Ruby
         uses: ruby/setup-ruby@v1
         with:
-          ruby-version-file: 'api/.ruby-version'
+          ruby-version: '3.2.2'
           bundler-cache: true
           
       - name: Run tests
