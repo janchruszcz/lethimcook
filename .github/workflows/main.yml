@@ -7,7 +7,7 @@ on:
 
 jobs:
   api-checks:
-    uses: ./.github/workflows/ci.yml
+    uses: ./.github/workflows/api-ci.yml
 
   frontend-checks:
     uses: ./.github/workflows/frontend-ci.yml
