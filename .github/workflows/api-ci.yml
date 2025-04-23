@@ -48,6 +48,9 @@ jobs:
           ruby-version: '3.2.2'
           bundler-cache: true
 
+      - name: Install dependencies
+        run: bundle install
+
       - name: Lint code for consistent style
         run: bin/rubocop -f github
 
@@ -65,7 +68,10 @@ jobs:
         with:
           ruby-version: '3.2.2'
           bundler-cache: true
-          
+
+      - name: Install dependencies
+        run: bundle install
+
       - name: Run tests
         run: bin/rails test
 
