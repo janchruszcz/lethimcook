@@ -1,13 +1,20 @@
-name: CI
+name: API CI
 
 on:
-  pull_request:
   push:
     branches: [ main ]
+    paths:
+      - 'api/**'
+  pull_request:
+    paths:
+      - 'api/**'
 
 jobs:
   scan_ruby:
     runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: api
 
     steps:
       - name: Checkout code
@@ -24,6 +31,9 @@ jobs:
 
   lint:
     runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: api
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -36,4 +46,22 @@ jobs:
 
       - name: Lint code for consistent style
         run: bin/rubocop -f github
+
+  test:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: api
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        
+      - name: Set up Ruby
+        uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: .ruby-version
+          bundler-cache: true
+          
+      - name: Run tests
+        run: bin/rails test
 
