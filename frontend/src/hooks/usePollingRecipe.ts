@@ -10,7 +10,7 @@ export function usePollingRecipe(recipeId: string | null) {
   useEffect(() => {
     if (!recipeId) return;
 
-    const pollInterval = 3000;
+    const pollInterval = 5000;
     let timeoutId: NodeJS.Timeout;
 
     const checkStatus = async () => {
