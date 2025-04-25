@@ -1,8 +1,10 @@
-class AiClientService
+class AnthropicAiService
+  # Generate a recipe using Anthropic AI
+  # @param ingredients [Array] ingredients for the recipe
+  # @return [String] generated recipe
+  
   def self.generate_recipe(ingredients)
     client = Anthropic::Client.new
-    puts "Generating recipe with ingredients: #{ingredients}"
-    puts "Recipe prompt: #{recipe_prompt(ingredients)}"
     client.messages(
       parameters: {
         model: "claude-3-sonnet-20240229",

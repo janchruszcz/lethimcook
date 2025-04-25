@@ -1,5 +1,5 @@
 class RecipeSerializer < Panko::Serializer
-  attributes :id, :title, :description, :ingredient_entries, :instructions, :image_url, 
+  attributes :id, :title, :description, :ingredient_entries, :instructions, :status, 
              :prep_time, :cook_time, :total_time, :ratings, :ingredients,
              :cuisine, :category, :author, :is_favorite, :main_image
 

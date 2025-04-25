@@ -1,4 +1,9 @@
 class RecipeGenerator
+  # Generate a recipe using Anthropic AI & Runware.ai
+  # @param ingredients [Array] ingredients for the recipe
+  # @param recipe_id [Integer] id of the recipe
+  # @return [Recipe] generated recipe
+
   def initialize(ingredients, recipe_id)
     @ingredients = ingredients
     @recipe = Recipe.find(recipe_id)
@@ -6,10 +11,19 @@ class RecipeGenerator
 
   def generate
     begin
-      response = AiClientService.generate_recipe(@ingredients)
+      response = AnthropicAiService.generate_recipe(@ingredients)
       puts "Response: #{response}"
       
       recipe_text = response["content"].first["text"]
+      puts "Recipe text: #{recipe_text}"
+      
+      # Extract JSON from code blocks if present
+      if recipe_text.include?("```json")
+        # Extract the JSON part between the code block markers
+        json_match = recipe_text.match(/```json\s*(.+?)```/m)
+        recipe_text = json_match[1].strip if json_match
+      end
+      
       raise "Invalid recipe format" unless recipe_text.present?
       recipe_data = JSON.parse(recipe_text)
       raise "Invalid recipe structure" unless valid_recipe?(recipe_data)
@@ -32,15 +46,10 @@ class RecipeGenerator
     )
     
     recipe_attributes['status'] = :completed
-    
-    # First update the regular attributes
-    @recipe.update!(recipe_attributes)
-    
-    # Then attach the image as a separate operation
+    puts "Recipe attributes: #{recipe_attributes.inspect}"
     generate_image(recipe_data['title']) if recipe_data['title'].present?
-    
-    # Save to ensure the attachment is persisted
-    @recipe.save! if @recipe.main_image.attached?
+    puts "Recipe: #{@recipe.inspect}"
+    @recipe.update!(recipe_attributes) if @recipe.main_image.attached?
   rescue => e
     Rails.logger.error("Recipe update error: #{e.message}")
     handle_error("Failed to update recipe: #{e.message}")

@@ -12,7 +12,14 @@ class Api::V1::AiChefController < ApplicationController
     recipe = Recipe.find_by(id: params[:recipe_id])
 
     if recipe
-      render json: { status: 'success', recipe: recipe }
+      render(
+        json: Panko::Response.create do |r|
+          {
+            success: true,
+            recipe: r.serializer(recipe, RecipeSerializer, context: { current_user: current_user })
+          }
+        end
+      )
     else
       render json: { status: 'failed', error: 'Recipe not found' }, status: :not_found
     end

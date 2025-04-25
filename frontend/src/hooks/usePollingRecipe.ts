@@ -1,43 +1,54 @@
 import { useState, useEffect } from 'react';
-import { checkRecipeStatus } from '../api/ai';
 import { Recipe } from '../types';
+import { checkRecipeStatus } from '../api/ai';
 
 export function usePollingRecipe(recipeId: string | null) {
   const [recipe, setRecipe] = useState<Recipe | null>(null);
-  const [error, setError] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    if (!recipeId) return;
+    if (!recipeId) {
+      console.log("No recipeId provided to polling hook");
+      return;
+    }
 
-    const pollInterval = 5000;
-    let timeoutId: NodeJS.Timeout;
-
-    const checkStatus = async () => {
+    console.log("Starting polling for recipe:", recipeId);
+    
+    let isMounted = true;
+    const pollInterval = setInterval(async () => {
       try {
+        console.log("Polling for recipe status:", recipeId);
         const response = await checkRecipeStatus(recipeId);
+        console.log("Polling response:", response);
         
-        if (response.recipe?.status === 'completed' && response.recipe) {
+        if (!isMounted) return;
+        
+        if (response.recipe?.status === 'completed') {
           setRecipe(response.recipe);
           setIsLoading(false);
+          clearInterval(pollInterval);
+          console.log("Recipe completed:", response.recipe);
         } else if (response.recipe?.status === 'failed') {
-          setError(response.error || 'Recipe generation failed');
+          setError('Recipe generation failed');
           setIsLoading(false);
-        } else {
-          timeoutId = setTimeout(checkStatus, pollInterval);
+          clearInterval(pollInterval);
+          console.log("Recipe generation failed");
         }
       } catch (err) {
+        if (!isMounted) return;
+        console.error("Error polling recipe status:", err);
         setError('Failed to check recipe status');
         setIsLoading(false);
+        clearInterval(pollInterval);
       }
-    };
-
-    checkStatus();
+    }, 5000);
 
     return () => {
-      if (timeoutId) clearTimeout(timeoutId);
+      isMounted = false;
+      clearInterval(pollInterval);
     };
   }, [recipeId]);
 
-  return { recipe, error, isLoading };
+  return { recipe, isLoading, error };
 }
