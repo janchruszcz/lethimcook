@@ -1,32 +1,37 @@
 class Api::V1::RecipesController < ApplicationController
   def index
     @recipes = Recipe.includes(:favorites)
-
     @recipes = RecipeFilterQuery.new(params, @recipes, current_user).call
-    
-    pagy, @recipes = pagy(@recipes)
 
-    render json: Panko::Response.new(
-      success: true,
-      recipes: Panko::ArraySerializer.new(
-        @recipes,
-        each_serializer: RecipeSerializer,
-        context: {
-          current_user: current_user
+    @recipes = @recipes.load # ensure the collection is loaded before stale?
+
+    if stale?(@recipes)
+      pagy, @recipes_paginated = pagy(@recipes)
+
+      render json: Panko::Response.new(
+        success: true,
+        recipes: Panko::ArraySerializer.new(
+          @recipes_paginated,
+          each_serializer: RecipeSerializer,
+          context: {
+            current_user: current_user
+          }
+        ),
+        pagination: {
+          page: pagy.page,
+          pages: pagy.pages,
+          count: pagy.count,
+          items: pagy.limit
         }
-      ),
-      pagination: {
-        page: pagy.page,
-        pages: pagy.pages,
-        count: pagy.count,
-        items: pagy.limit
-      }
-    )
+      )
+    end
   end
 
   def show
     @recipe = Recipe.find(params[:id])
-    render_success(@recipe)
+    if stale?(@recipe)
+      render_success(@recipe)
+    end
   end
 
   def create
