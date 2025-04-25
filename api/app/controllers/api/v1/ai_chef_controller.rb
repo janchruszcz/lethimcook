@@ -1,27 +1,30 @@
 class Api::V1::AiChefController < ApplicationController
 
   def generate_recipe
-    recipe = Recipe.create!(title: 'New Recipe', status: 'pending', user_id: current_user.id)
+    @recipe = Recipe.create!(
+      title: 'New AI Recipe (Pending)',
+      status: 'pending',
+      user: current_user
+    )
 
-    GenerateRecipeJob.perform_later(params[:ingredients], recipe.id)
+    GenerateRecipeJob.perform_later(params[:ingredients], @recipe.id)
 
-    render json: { status: 'success', recipeId: recipe.id, message: 'Recipe generation started' }
+    render_success(@recipe, :created)
   end
 
   def recipe_status
-    recipe = Recipe.find_by(id: params[:recipe_id])
+    @recipe = Recipe.find(params[:recipe_id])
+    render_success(@recipe)
+  end
 
-    if recipe
-      render(
-        json: Panko::Response.create do |r|
-          {
-            success: true,
-            recipe: r.serializer(recipe, RecipeSerializer, context: { current_user: current_user })
-          }
-        end
-      )
-    else
-      render json: { status: 'failed', error: 'Recipe not found' }, status: :not_found
-    end
+  private
+
+  def render_success(data, status = :ok)
+    render(json: Panko::Response.create do |r|
+      {
+        success: true,
+        data: r.serializer(data, RecipeSerializer, context: { current_user: current_user })
+      }
+    end, status: status)
   end
 end

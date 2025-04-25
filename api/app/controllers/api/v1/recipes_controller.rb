@@ -2,22 +2,7 @@ class Api::V1::RecipesController < ApplicationController
   def index
     @recipes = Recipe.includes(:favorites)
 
-    if params[:my_recipes] == 'true'
-      @recipes = @recipes.where(user: current_user)
-    end
-
-    if params[:favorites] == 'true'
-      @recipes = @recipes.where(favorites: { user: current_user })
-    end
-
-    if params[:ingredients].present?
-      ingredient_names = params[:ingredients].split(',').map(&:strip)
-      if params[:exact] == 'true'
-        @recipes = @recipes.with_exact_ingredients(ingredient_names)
-      else
-        @recipes = @recipes.search_by_ingredient_entries(ingredient_names)
-      end
-    end
+    @recipes = RecipeFilterQuery.new(params, @recipes, current_user).call
     
     pagy, @recipes = pagy(@recipes)
 
@@ -41,58 +26,37 @@ class Api::V1::RecipesController < ApplicationController
 
   def show
     @recipe = Recipe.find(params[:id])
-    
-    render(
-      json: Panko::Response.create do |r|
-        {
-          success: true,
-          recipe: r.serializer(@recipe, RecipeSerializer, context: { current_user: current_user })
-        }
-      end
-    )
+    render_success(@recipe)
   end
 
   def create
     @recipe = current_user.recipes.build(recipe_params)
-    
-    if @recipe.save
-      render(
-        json: Panko::Response.create do |r|
-          {
-            success: true,
-            recipe: r.serializer(@recipe, RecipeSerializer, context: { current_user: current_user })
-          }
-        end
-      )
-    else
-      render json: { success: false, errors: @recipe.errors }, status: :unprocessable_entity
-    end
+    @recipe.save!
+    render_success(@recipe, :created)
   end
 
   def update
     @recipe = current_user.recipes.find(params[:id])
-    
-    if @recipe.update(recipe_params)
-      render(
-        json: Panko::Response.create do |r|
-          {
-            success: true,
-            recipe: r.serializer(@recipe, RecipeSerializer, context: { current_user: current_user })
-          }
-        end
-      )
-    else
-      render json: { success: false, errors: @recipe.errors }, status: :unprocessable_entity
-    end
+    @recipe.update!(recipe_params)
+    render_success(@recipe)
   end
 
   def destroy
     @recipe = current_user.recipes.find(params[:id])
-    @recipe.destroy
-    render json: { success: true }
+    @recipe.destroy!
+    render_success(@recipe)
   end
 
   private
+
+  def render_success(data, status = :ok)
+    render(json: Panko::Response.create do |r|
+      {
+        success: true,
+        data: r.serializer(data, RecipeSerializer, context: { current_user: current_user })
+      }
+    end, status: status)
+  end
 
   def recipe_params
     params.expect(recipe: [:title, 
