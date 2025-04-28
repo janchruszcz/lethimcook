@@ -5,7 +5,7 @@ class Api::V1::RecipesController < ApplicationController
 
     @recipes = @recipes.load # ensure the collection is loaded before stale?
 
-    if stale?(@recipes)
+    if stale?(etag: [@recipes, current_user])
       pagy, @recipes_paginated = pagy(@recipes)
 
       render json: Panko::Response.new(
@@ -29,7 +29,7 @@ class Api::V1::RecipesController < ApplicationController
 
   def show
     @recipe = Recipe.find(params[:id])
-    if stale?(@recipe)
+    if stale?(etag: [@recipe, current_user])
       render_success(@recipe)
     end
   end
