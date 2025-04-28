@@ -39,12 +39,19 @@ class Api::V1::RecipesControllerTest < ActionDispatch::IntegrationTest
     
     response_body = JSON.parse(response.body)
     assert response_body["success"]
-    assert response_body["recipe"].present?
+    assert response_body["data"].present?
+    assert_equal @recipe.id, response_body["data"]["id"]
   end
 
   test "should return 404 for non-existent recipe" do
     get api_v1_recipe_url(id: 'non-existent')
     assert_response :not_found
+    
+    response_body = JSON.parse(response.body)
+    assert_not response_body["success"]
+    assert_kind_of Array, response_body["errors"]
+    assert_equal "404", response_body["errors"][0]["status"]
+    assert_equal "record_not_found", response_body["errors"][0]["code"]
   end
 
   test "pagination should work" do
@@ -61,37 +68,52 @@ class Api::V1::RecipesControllerTest < ActionDispatch::IntegrationTest
 
     response_body = JSON.parse(response.body)
     assert response_body["success"]
-    assert_equal "Updated Title", response_body["recipe"]["title"]
-    assert_equal ["tomato", "garlic"], response_body["recipe"]["ingredient_entries"]
+    assert_equal "Updated Title", response_body["data"]["title"]
+    assert_equal ["tomato", "garlic"], response_body["data"]["ingredient_entries"]
     @recipe.reload
     assert_equal "Updated Title", @recipe.title
     assert_equal ["tomato", "garlic"], @recipe.ingredient_entries
   end
 
   test "should not update recipe with invalid data" do
-    patch api_v1_recipe_url(@recipe), params: { recipe: { title: "" } }, as: :json # Assuming title cannot be blank
+    patch api_v1_recipe_url(@recipe), params: { recipe: { title: "" } }, as: :json
     assert_response :unprocessable_entity
 
     response_body = JSON.parse(response.body)
     assert_not response_body["success"]
     assert response_body["errors"].present?
+    assert_kind_of Array, response_body["errors"]
+    assert_equal "422", response_body["errors"][0]["status"]
+    assert_equal "record_invalid", response_body["errors"][0]["code"]
+    assert_match /Title can't be blank/, response_body["errors"][0]["detail"]
   end
 
   test "should return 404 when trying to update non-existent recipe" do
     patch api_v1_recipe_url(id: 'non-existent'), params: { recipe: { title: "Updated Title" } }, as: :json
     assert_response :not_found
+    
+    response_body = JSON.parse(response.body)
+    assert_not response_body["success"]
+    assert_equal "record_not_found", response_body["errors"][0]["code"]
   end
 
   test "should destroy recipe" do
     assert_difference('Recipe.count', -1) do
       delete api_v1_recipe_url(@recipe)
     end
-    assert_response :success
+    assert_response :ok
+    
+    response_body = JSON.parse(response.body)
+    assert response_body["success"]
   end
 
   test "should return 404 when trying to destroy non-existent recipe" do
     delete api_v1_recipe_url(id: 'non-existent')
     assert_response :not_found
+
+    response_body = JSON.parse(response.body)
+    assert_not response_body["success"]
+    assert_equal "record_not_found", response_body["errors"][0]["code"]
   end
 
   test "should create recipe" do
@@ -111,16 +133,15 @@ class Api::V1::RecipesControllerTest < ActionDispatch::IntegrationTest
       }, as: :json
     end
 
-    assert_response :success
+    assert_response :created
 
     response_body = JSON.parse(response.body)
     assert response_body["success"]
-    assert response_body["recipe"].present?
-    assert_equal "New Test Recipe", response_body["recipe"]["title"]
-    assert_equal ["ingredient1", "ingredient2"], response_body["recipe"]["ingredient_entries"]
+    assert response_body["data"].present?
+    assert_equal "New Test Recipe", response_body["data"]["title"]
+    assert_equal ["ingredient1", "ingredient2"], response_body["data"]["ingredient_entries"]
     
-    # Verify ownership
-    created_recipe = Recipe.find(response_body["recipe"]["id"])
+    created_recipe = Recipe.find(response_body["data"]["id"])
     assert_equal @user.id, created_recipe.user_id
   end
 
@@ -138,6 +159,9 @@ class Api::V1::RecipesControllerTest < ActionDispatch::IntegrationTest
     response_body = JSON.parse(response.body)
     assert_not response_body["success"]
     assert response_body["errors"].present?
-    assert response_body["errors"]["title"].present? # Check for specific error
+    assert_kind_of Array, response_body["errors"]
+    assert_equal "422", response_body["errors"][0]["status"]
+    assert_equal "record_invalid", response_body["errors"][0]["code"]
+    assert_match /Title can't be blank/, response_body["errors"][0]["detail"]
   end
 end

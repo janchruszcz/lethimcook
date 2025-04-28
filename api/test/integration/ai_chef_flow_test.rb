@@ -28,7 +28,7 @@ class AiChefFlowTest < ActionDispatch::IntegrationTest
     assert_response :success
     
     initiation_response = JSON.parse(response.body)
-    recipe_id = initiation_response["recipeId"]
+    recipe_id = initiation_response["data"]["id"]
     assert_not_nil recipe_id
 
     # Verify recipe exists in DB from the test's perspective immediately after creation
@@ -41,7 +41,7 @@ class AiChefFlowTest < ActionDispatch::IntegrationTest
     assert_response :success
     
     status_response = JSON.parse(response.body)
-    assert_equal "pending", status_response["recipe"]["status"]
+    assert_equal "pending", status_response["data"]["status"]
     
     # Step 3: Simulate recipe completion
     Recipe.find(recipe_id).update(
@@ -59,17 +59,17 @@ class AiChefFlowTest < ActionDispatch::IntegrationTest
     assert_response :success
     
     completion_response = JSON.parse(response.body)
-    assert_equal "completed", completion_response["recipe"]["status"]
-    assert_equal "AI Chicken and Rice", completion_response["recipe"]["title"]
+    assert_equal "completed", completion_response["data"]["status"]
+    assert_equal "AI Chicken and Rice", completion_response["data"]["title"]
     
     # Step 5: View the generated recipe
     get "/api/v1/recipes/#{recipe_id}"
     assert_response :success
     
     recipe_response = JSON.parse(response.body)
-    assert_equal "AI Chicken and Rice", recipe_response["recipe"]["title"]
-    assert_equal 10, recipe_response["recipe"]["prep_time"]
-    assert_equal 20, recipe_response["recipe"]["cook_time"]
+    assert_equal "AI Chicken and Rice", recipe_response["data"]["title"]
+    assert_equal 10, recipe_response["data"]["prep_time"]
+    assert_equal 20, recipe_response["data"]["cook_time"]
     
     # Step 6: Simulate recipe generation failure
     another_recipe_id = Recipe.create!(user: @user, title: "Failed Recipe", status: :pending).id
@@ -79,6 +79,6 @@ class AiChefFlowTest < ActionDispatch::IntegrationTest
     assert_response :success
     
     failure_response = JSON.parse(response.body)
-    assert_equal "failed", failure_response["recipe"]["status"]
+    assert_equal "failed", failure_response["data"]["status"]
   end
 end 

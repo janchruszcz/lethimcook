@@ -12,10 +12,10 @@ class RecipeGenerator
   def generate
     begin
       response = AnthropicAiService.generate_recipe(@ingredients)
-      puts "Response: #{response}"
+      #puts "Response: #{response}"
       
       recipe_text = response["content"].first["text"]
-      puts "Recipe text: #{recipe_text}"
+      #puts "Recipe text: #{recipe_text}"
       
       # Extract JSON from code blocks if present
       if recipe_text.include?("```json")
@@ -46,9 +46,9 @@ class RecipeGenerator
     )
     
     recipe_attributes['status'] = :completed
-    puts "Recipe attributes: #{recipe_attributes.inspect}"
+    #puts "Recipe attributes: #{recipe_attributes.inspect}"
     generate_image(recipe_data['title']) if recipe_data['title'].present?
-    puts "Recipe: #{@recipe.inspect}"
+    #puts "Recipe: #{@recipe.inspect}"
     @recipe.update!(recipe_attributes) if @recipe.main_image.attached?
   rescue => e
     Rails.logger.error("Recipe update error: #{e.message}")

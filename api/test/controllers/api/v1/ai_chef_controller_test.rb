@@ -1,5 +1,5 @@
 require "test_helper"
-require 'minitest/mock' # Require Minitest's mock library
+require 'minitest/mock'
 
 class Api::V1::AiChefControllerTest < ActionDispatch::IntegrationTest
 
@@ -13,57 +13,77 @@ class Api::V1::AiChefControllerTest < ActionDispatch::IntegrationTest
       post api_v1_ai_chef_generate_recipe_url, params: { ingredients: ["tomato", "pasta"] }, as: :json
     end
     
-    assert_response :success
+    assert_response :created 
 
     response_body = JSON.parse(response.body)
-    assert_equal "success", response_body["status"]
-    assert_equal "Recipe generation started", response_body["message"]
-    assert_not_nil response_body["recipeId"]
+    assert response_body["success"] 
+    assert_not_nil response_body["data"]["id"]
 
-    # Optional: Check the created recipe's initial state
-    created_recipe = Recipe.find(response_body["recipeId"])
+    created_recipe = Recipe.find(response_body["data"]["id"])
     assert_equal 'pending', created_recipe.status
     assert_equal @user, created_recipe.user
+    assert_equal 'New AI Recipe (Pending)', created_recipe.title
   end
   
   test "should get recipe status using mock" do
     expected_recipe_id = 'mock-recipe-123'
 
-    mock_recipe = Minitest::Mock.new
-    mock_recipe.expect(:as_json, { 
+    mock_recipe_data = { 
       id: expected_recipe_id, 
       title: 'Mocked Recipe Title', 
       status: 'completed',
-    }, [])
+      description: nil, 
+      instructions: [],
+      ingredient_entries: [],
+    }
+    
+    mock_recipe = Minitest::Mock.new
+    mock_recipe.expect(:id, expected_recipe_id)
+    mock_recipe.expect(:title, 'Mocked Recipe Title')
+    mock_recipe.expect(:status, 'completed')
+    mock_recipe.expect(:user_id, @user.id)
+    mock_recipe.expect(:description, nil)
+    mock_recipe.expect(:instructions, [])
+    mock_recipe.expect(:ingredient_entries, [])
+    mock_recipe.expect(:image_url, nil)
+    mock_recipe.expect(:main_image, 'https://example.com/image.jpg')
+    mock_recipe.expect(:prep_time, nil)
+    mock_recipe.expect(:cook_time, nil)
+    mock_recipe.expect(:cuisine, nil)
+    mock_recipe.expect(:category, nil)
+    mock_recipe.expect(:ratings, nil)
+    mock_recipe.expect(:author, nil)
+    mock_recipe.expect(:favorites, [])
 
 
-    Recipe.stub :find_by, mock_recipe, [{ id: expected_recipe_id }] do
+    Recipe.stub :find, mock_recipe, [expected_recipe_id] do
       get api_v1_ai_chef_recipe_status_url(recipe_id: expected_recipe_id), as: :json 
     end 
 
     assert_response :success
     response_body = JSON.parse(response.body)
     
-    assert_not_nil response_body["recipe"]
-    assert_equal expected_recipe_id, response_body["recipe"]["id"]
-    assert_equal 'Mocked Recipe Title', response_body["recipe"]["title"]
-    assert_equal 'completed', response_body["recipe"]["status"]
+    assert response_body["success"]
+    assert_not_nil response_body["data"]
+    assert_equal expected_recipe_id, response_body["data"]["id"]
+    assert_equal 'Mocked Recipe Title', response_body["data"]["title"]
+    assert_equal 'completed', response_body["data"]["status"]
 
     mock_recipe.verify
   end
 
-  test "should return not found for invalid recipe id using mock" do
+  test "should return not found for invalid recipe id" do
     invalid_recipe_id = 'invalid-id-404'
 
-    Recipe.stub :find_by, nil, [{ id: invalid_recipe_id }] do
-        get api_v1_ai_chef_recipe_status_url(recipe_id: invalid_recipe_id), as: :json
-    end 
+    get api_v1_ai_chef_recipe_status_url(recipe_id: invalid_recipe_id), as: :json
 
     assert_response :not_found 
 
     response_body = JSON.parse(response.body)
-    assert_equal "failed", response_body["status"]
-    assert_equal "Recipe not found", response_body["error"]
-    assert_nil response_body["recipe"] 
+    assert_not response_body["success"]
+    assert_kind_of Array, response_body["errors"]
+    assert_equal "404", response_body["errors"][0]["status"]
+    assert_equal "record_not_found", response_body["errors"][0]["code"]
+    assert_match /Couldn't find Recipe/, response_body["errors"][0]["detail"]
   end
 end

@@ -1,4 +1,4 @@
 class Favorite < ApplicationRecord
   belongs_to :user
-  belongs_to :recipe
+  belongs_to :recipe, touch: true
 end

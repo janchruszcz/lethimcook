@@ -61,13 +61,13 @@ class AuthenticationFlowTest < ActionDispatch::IntegrationTest
     assert_response :success
     
     recipe_response = JSON.parse(response.body)
-    assert recipe_response["recipe"]["id"].present?
+    assert recipe_response["data"]["id"].present?
     
     # Step 8: Verify the recipe was created
-    get "/api/v1/recipes/#{recipe_response["recipe"]["id"]}"
+    get "/api/v1/recipes/#{recipe_response["data"]["id"]}"
     assert_response :success
     
     get_recipe_response = JSON.parse(response.body)
-    assert_equal "Integration Test Recipe", get_recipe_response["recipe"]["title"]
+    assert_equal "Integration Test Recipe", get_recipe_response["data"]["title"]
   end
 end
