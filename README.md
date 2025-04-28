@@ -25,18 +25,18 @@ Note: This is a work in progress. Initial load - first query to API takes a whil
 - PostgreSQL with pg_search (possible migration to ElasticSearch in the future)
 - Devise for authentication (session-based for initial simplicity, might migrate to JWT)
 - Minitest for testing
-- Panko Serializer for JSON serialization (better performance)
-- Pagy for pagination (better performance)
 - Anthropic for AI
 - RESTful API design with versioning (`/api/v1`)
 - Background jobs (Solid Queue) for AI generation
-- Service objects and serializers for clean code separation
+- Service objects, query objects and serializers for clean code separation
+- Panko Serializer for JSON serialization (better performance)
+- Pagy for pagination (better performance)
 
 ### 💻 Frontend (React 18, TypeScript)
 - Component-based architecture
+- Tailwind CSS for modern responsive UI
 - Zustand for state management (lightweight, better performance, less code)
 - React Query for data fetching with optimized caching strategies for better UX and reduced API calls
-- Tailwind CSS for modern responsive UI
 - Axios for API communication
 - Vite as build tool
 
@@ -48,9 +48,12 @@ Note: This is a work in progress. Initial load - first query to API takes a whil
 │   ├── app/               # Rails application code
 │   ├── config/            # Rails configuration
 │   └── db/                # Database migrations and schema
+│   └── test/              # Test suite
+│   └── storage/           # Database migrations and schema
 └── frontend/              # React frontend
     ├── api/               # API client and services
     ├── components/        # React components
+    ├── hooks/             # Custom React hooks
     ├── stores/            # Zustand stores
     └── types/             # TypeScript type definitions
 ```
@@ -61,15 +64,19 @@ Note: This is a work in progress. Initial load - first query to API takes a whil
 
 - Recipe many-to-many relationship with Ingredients via RecipeIngredients is a relic of initial database structure and initial app idea. Currently we use ingredient_entries(string[]) column in recipes table to give users full freedom of input (simplicity and rapidness of development was also important here). In the future we might consider scanning these entries to extract the ingredient and create the relationship, which then would allow us to do more fancy stuff in terms of UX (e.g. ingredient unit/alias) or more professional in terms of engineering (e.g. easier recipes grouping, without need to do a full-text search).
 
-- Favorite is a separate model because in the future we would like to have favorite ingredients/cuisines also (see Product Roadmap).
+- Favorite is a separate model because in the future we would like to have favorite ingredients/cuisines also (see Product Roadmap below).
 
 - Some Rails model validations exist primarily to support test cases — input validation is mostly delegated to the frontend or database constraints. This approach was recommended by DHH.
 
-- Consider migrating from pg_search to ElasticSearch.
+- Consider migrating from pg_search to ElasticSearch (performance).
 
-- Increase test coverage. Crucial parts are rather covered, but it is always good to aim for better coverage.
+- Increase test coverage. Crucial parts are rather covered, but aim for better.
 
-- Implement server-side caching.
+- Develop more advanced caching
+
+- Implement RAG for generated recipes - AI retrieves real recipes or cooking rules, then helps validate or guide generation
+
+- Rate limiting. Analyze costs of queries and potential pricing plans.
 
 ### Frontend
 
@@ -90,11 +97,10 @@ Note: This is a work in progress. Initial load - first query to API takes a whil
 - Pantry - favorite/frequently used ingredients - possible AI suggestions on what to refill soon etc. (FRIDGE-AI)
 
 ### Recipes
-- Fancy-o-meter - how fancy/spicy generated recipe should be - user config for generated recipes
-- Generate recipe image
-- Friendly urls
+- Fancy-o-meter - how fancy/spicy generated recipe should be - more user inputs to generate recipes
+- Friendly URLs
 - Generate recipe based on macros (kcal, proteins, carbs, fats)
-- Generate whole eating plan (recipes) for i.e. one week based on macros/ingredients
+- Generate whole diet plan (recipes) for i.e. one week based on macros/ingredients
 - Ranking - most favorited / best rated recipes should appear on the top of the list
 - Analyze favorite vs rating
 
@@ -138,6 +144,7 @@ cd lethimcook
 2. Install frontend dependencies:
 
 ```bash
+cd frontend
 npm install
 ```
 
@@ -160,7 +167,7 @@ npm run dev
 In another terminal (for backend):
 
 ```bash
-npm run api
+rails s
 ```
 
 The application will be available at:
