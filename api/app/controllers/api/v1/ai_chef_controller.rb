@@ -1,10 +1,12 @@
 class Api::V1::AiChefController < ApplicationController
+  before_action :authenticate_user!
 
   def generate_recipe
     @recipe = Recipe.create!(
       title: 'New AI Recipe (Pending)',
       status: 'pending',
-      user: current_user
+      user: current_user,
+      instructions: ['Let me cook...']
     )
 
     GenerateRecipeJob.perform_later(params[:ingredients], @recipe.id)

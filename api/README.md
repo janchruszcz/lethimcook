@@ -263,45 +263,54 @@ Endpoints are prefixed with `/api/v1`.
 
 ### AI Chef
 
-#### `POST /api/v1/ai/generate_recipe`
+#### `POST /api/v1/ai_chef/generate_recipe`
 
-*   **Description**: Initiates an asynchronous background job to generate a recipe using AI based on provided ingredients.
-*   **Authentication**: Not Required (though the generated recipe might need user association later).
+*   **Description**: Initiates an asynchronous background job to generate a recipe using AI based on provided ingredients. Creates a placeholder recipe record immediately.
+*   **Authentication**: Required.
 *   **Request Body** (`application/json`):
     ```json
     {
-      "ingredients": "chicken, broccoli, soy sauce"
+      "ingredients": ["chicken", "broccoli", "soy sauce"]
     }
     ```
-*   **Successful Response (200 OK)**: Returns the ID of the placeholder recipe created and confirms the job start.
+*   **Successful Response (201 Created)**: Returns the details of the placeholder recipe created (including its ID) and confirms the job start.
     ```json
     {
-      "recipeId": 55,
-      "message": "Recipe generation started"
-    }
-    ```
-
-#### `GET /api/v1/ai/recipe_status/:recipe_id`
-
-*   **Description**: Checks the status and potentially retrieves the details of an AI-generated recipe.
-*   **Authentication**: Not Required.
-*   **URL Parameters**:
-    *   `:recipe_id` (Integer, required): The ID returned by the `POST /api/v1/ai/generate_recipe` endpoint.
-*   **Successful Response (200 OK - Pending/Complete)**: Returns the current recipe object, including its status (`pending`, `completed`, `failed`).
-    ```json
-    {
-      "recipe": {
+      "success": true,
+      "data": {
         "id": 55,
-        "title": "AI Generated Recipe (Pending)", // Title might update
-        "status": "pending", // or "completed", "failed"
-        // ... other attributes might be populated when completed ...
+        "title": "New AI Recipe (Pending)",
+        "status": "pending",
+        "user_id": 1, 
+        // ... other relevant initial recipe attributes from RecipeSerializer ...
+        "is_favorite": false 
       }
     }
     ```
-*   **Response (200 OK - Not Found)**: Note: Returns 200 OK even if the recipe ID doesn't exist.
+*   **Error Response (422 Unprocessable Entity)**: If validation fails (e.g., no ingredients provided, user not authenticated).
+
+#### `GET /api/v1/ai_chef/recipe_status/:recipe_id`
+
+*   **Description**: Checks the status and potentially retrieves the details of an AI-generated recipe.
+*   **Authentication**: Required (or should verify user ownership if recipe data is sensitive).
+*   **URL Parameters**:
+    *   `:recipe_id` (Integer, required): The ID of the recipe returned by the `POST /api/v1/ai_chef/generate_recipe` endpoint.
+*   **Successful Response (200 OK)**: Returns the current recipe object using the `RecipeSerializer`, including its status (`pending`, `completed`, `failed`).
     ```json
     {
-      "status": "failed",
-      "error": "Recipe not found"
+      "success": true,
+      "data": {
+        "id": 55,
+        "title": "AI Chicken Stir-fry", // Title might update
+        "status": "completed", // or "pending", "failed"
+        "description": "A quick stir-fry.",
+        "instructions": "1. Cook chicken...",
+        "prep_time": 10,
+        "cook_time": 15,
+        "ingredient_entries": ["1 lb chicken", "1 head broccoli", "1/4 cup soy sauce"],
+        // ... other recipe attributes populated when completed ...
+        "is_favorite": false 
+      }
     }
     ```
+*   **Error Response (404 Not Found)**: If the recipe ID is invalid or doesn't belong to the user (if ownership is checked). Standard not found JSON error response.
