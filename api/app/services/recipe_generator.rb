@@ -10,60 +10,70 @@ class RecipeGenerator
   end
 
   def generate
-    begin
-      response = AnthropicAiService.generate_recipe(@ingredients)
-      #puts "Response: #{response}"
-      
-      recipe_text = response["content"].first["text"]
-      #puts "Recipe text: #{recipe_text}"
-      
-      # Extract JSON from code blocks if present
-      if recipe_text.include?("```json")
-        # Extract the JSON part between the code block markers
-        json_match = recipe_text.match(/```json\s*(.+?)```/m)
-        recipe_text = json_match[1].strip if json_match
-      end
-      
-      raise "Invalid recipe format" unless recipe_text.present?
-      recipe_data = JSON.parse(recipe_text)
-      raise "Invalid recipe structure" unless valid_recipe?(recipe_data)
-
-      update_recipe(recipe_data)
-      @recipe
-    rescue JSON::ParserError => e
-      handle_error("Failed to parse recipe: #{e.message}")
-    rescue StandardError => e
-      handle_error("Recipe generation error: #{e.message}")
-    end
+    return failure_result("No ingredients provided") if @ingredients.blank?
+    
+    recipe_data = fetch_recipe_data
+    return recipe_data if recipe_data.failure?
+    
+    update_result = update_recipe(recipe_data.value)
+    return update_result if update_result.failure?
+    
+    Success.new(@recipe)
   end
 
   private
+
+  def fetch_recipe_data
+    response = AnthropicAiService.generate_recipe(@ingredients)
+    recipe_text = extract_recipe_text(response)
+    
+    return Failure.new("Invalid recipe format") unless recipe_text.present?
+    
+    begin
+      recipe_data = JSON.parse(recipe_text)
+      return Failure.new("Invalid recipe structure") unless valid_recipe?(recipe_data)
+      Success.new(recipe_data)
+    rescue JSON::ParserError => e
+      Failure.new("Failed to parse recipe: #{e.message}")
+    end
+  end
+
+  def extract_recipe_text(response)
+    recipe_text = response["content"].first["text"]
+    
+    if recipe_text.include?("```json")
+      json_match = recipe_text.match(/```json\s*(.+?)```/m)
+      recipe_text = json_match[1].strip if json_match
+    end
+    
+    recipe_text
+  end
 
   def update_recipe(recipe_data)
     recipe_attributes = recipe_data.slice(
       'title', 'description', 'ingredient_entries', 'instructions',
       'cuisine', 'category', 'prep_time', 'cook_time', 'author'
     )
-    
     recipe_attributes['status'] = :completed
-    #puts "Recipe attributes: #{recipe_attributes.inspect}"
-    generate_image(recipe_data['title']) if recipe_data['title'].present?
-    #puts "Recipe: #{@recipe.inspect}"
-    @recipe.update!(recipe_attributes) if @recipe.main_image.attached?
-  rescue => e
-    Rails.logger.error("Recipe update error: #{e.message}")
-    handle_error("Failed to update recipe: #{e.message}")
-    raise
+    
+    image_result = generate_image(recipe_data['title']) if recipe_data['title'].present?
+    return image_result if image_result&.failure?
+    
+    begin
+      @recipe.update!(recipe_attributes) if @recipe.main_image.attached?
+      Success.new(@recipe)
+    rescue => e
+      Rails.logger.error("Recipe update error: #{e.message}")
+      @recipe.update(status: :failed)
+      Failure.new("Failed to update recipe: #{e.message}")
+    end
   end
 
   def generate_image(recipe_title)
-    begin
-      image_url = RecipeImageGenerator.generate(recipe_title)
-      puts "Image URL: #{image_url}"
-        
-      return nil if image_url.blank?
+    image_url = RecipeImageGenerator.generate(recipe_title)
+    return Failure.new("Failed to generate image") if image_url.blank?
 
-      # Download the image from the URL with proper headers
+    begin
       require 'open-uri'
       downloaded_image = URI.open(
         image_url,
@@ -71,36 +81,28 @@ class RecipeGenerator
         'Accept' => 'image/jpeg,image/png,image/*'
       )
       
-      # Generate a unique filename
       filename = "#{recipe_title.parameterize}-#{Time.now.to_i}.jpg"
       
-      # Attach the image to the recipe
       @recipe.main_image.attach(
         io: downloaded_image,
         filename: filename,
         content_type: 'image/jpeg'
       )
       
-      puts "Image successfully attached for recipe #{@recipe.id}"
-    rescue OpenURI::HTTPError => e
-      puts "Failed to download image: #{e.message}"
-    rescue StandardError => e
-      puts "Error attaching image: #{e.message}"
-      puts e.backtrace.join("\n")
+      Success.new(true)
+    rescue => e
+      Rails.logger.error("Image generation error: #{e.message}")
+      Failure.new("Failed to process image: #{e.message}")
     end
-    
-    nil
-  end
-
-  def handle_error(message)
-    @recipe.update!(
-      status: "failed",
-    )
-    render json: { error: message }, status: :unprocessable_entity
   end
 
   def valid_recipe?(recipe)
     required_fields = %w[title description ingredient_entries instructions]
     required_fields.all? { |field| recipe[field].present? }
   end
+
+  def failure_result(message)
+    Failure.new(message)
+  end
 end
+
