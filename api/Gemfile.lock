@@ -216,6 +216,7 @@ GEM
     pg_search (2.3.7)
       activerecord (>= 6.1)
       activesupport (>= 6.1)
+    pgvector (0.3.2)
     psych (5.2.0)
       stringio
     puma (6.5.0)
@@ -298,6 +299,10 @@ GEM
       rubocop-minitest
       rubocop-performance
       rubocop-rails
+    ruby-openai (8.1.0)
+      event_stream_parser (>= 0.3.0, < 2.0.0)
+      faraday (>= 1)
+      faraday-multipart (>= 1)
     ruby-progressbar (1.13.0)
     ruby2_keywords (0.0.5)
     securerandom (0.3.2)
@@ -364,10 +369,12 @@ DEPENDENCIES
   panko_serializer!
   pg (~> 1.1)
   pg_search
+  pgvector
   puma (>= 5.0)
   rack-cors
   rails (~> 8.0.0)
   rubocop-rails-omakase
+  ruby-openai
   solid_cache
   solid_queue
   thruster
