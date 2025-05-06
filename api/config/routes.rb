@@ -1,4 +1,3 @@
-
 Rails.application.routes.draw do
   # Define your application routes per the DSL in https://guides.rubyonrails.org/routing.html
 
@@ -28,7 +27,9 @@ Rails.application.routes.draw do
   # API routes
   namespace :api do
     namespace :v1 do
-      resources :recipes, only: [:index, :show, :create, :destroy, :update]
+      resources :recipes, only: [:index, :show, :create, :destroy, :update] do
+        resources :similar_recipes, only: [:index], module: :recipes
+      end
       resources :ingredients, only: [:index] do
         collection do
           get 'search'
@@ -37,6 +38,8 @@ Rails.application.routes.draw do
       resources :favorites, only: [:create, :destroy]
       post 'ai_chef/generate_recipe', to: 'ai_chef#generate_recipe'
       get 'ai_chef/recipe_status/:recipe_id', to: 'ai_chef#recipe_status', as: 'ai_chef_recipe_status'
+      get '/similar_recipes/by_ingredients', to: 'similar_recipes#by_ingredients'
+      get '/similar_recipes/by_query', to: 'similar_recipes#by_query'
     end
   end
 end

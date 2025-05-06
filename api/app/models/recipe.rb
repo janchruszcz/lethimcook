@@ -18,7 +18,10 @@ class Recipe < ApplicationRecord
 
   # Validations
   validates :title, presence: true
-
+  
+  # Callbacks
+  after_save :generate_embedding, if: :should_generate_embedding?
+  
   # Search
   pg_search_scope :search_by_ingredients, 
     associated_against: {
@@ -34,23 +37,48 @@ class Recipe < ApplicationRecord
       tsearch: { prefix: true }
     }
 
- # Finds recipes containing at least these ingredients
- scope :with_ingredients, -> (ingredients) {
-   where(
-     ingredients.map { |ingredient|
-       "EXISTS (SELECT 1 FROM unnest(ingredient_entries) entry WHERE entry ILIKE ?)"
-     }.join(' AND '),
-     *ingredients.map { |i| "%#{i}%" }
-   )
- }
+  # Finds recipes containing at least these ingredients
+  scope :with_ingredients, -> (ingredients) {
+    where(
+      ingredients.map { |ingredient|
+        "EXISTS (SELECT 1 FROM unnest(ingredient_entries) entry WHERE entry ILIKE ?)"
+      }.join(' AND '),
+      *ingredients.map { |i| "%#{i}%" }
+    )
+  }
 
- # Finds recipes containing exactly these ingredients - no more, no less
- scope :with_exact_ingredients, -> (ingredients) {
-   with_ingredients(ingredients)
-     .where("array_length(ingredient_entries, 1) = ?", ingredients.length)
- }
+  # Finds recipes containing exactly these ingredients - no more, no less
+  scope :with_exact_ingredients, -> (ingredients) {
+    with_ingredients(ingredients)
+      .where("array_length(ingredient_entries, 1) = ?", ingredients.length)
+  }
 
   def total_time
     (prep_time || 0) + (cook_time || 0)
+  end
+  
+  def validate_recipe
+    RecipeValidatorService.validate(self)
+  end
+  
+  def similar_recipes(limit: 5)
+    RecipeSimilarityService.find_similar_to_recipe(self, limit: limit)
+  end
+  
+  private
+  
+  def should_generate_embedding?
+    completed? && (
+      title_previously_changed? || 
+      description_previously_changed? || 
+      ingredient_entries_previously_changed? || 
+      instructions_previously_changed? ||
+      cuisine_previously_changed? ||
+      category_previously_changed?
+    )
+  end
+  
+  def generate_embedding
+    RecipeEmbeddingService.update_recipe_embedding(self)
   end
 end

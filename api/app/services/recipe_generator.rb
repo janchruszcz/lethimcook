@@ -18,6 +18,8 @@ class RecipeGenerator
     update_result = update_recipe(recipe_data.value)
     return update_result if update_result.failure?
     
+    validate_recipe
+    
     Success.new(@recipe)
   end
 
@@ -103,6 +105,15 @@ class RecipeGenerator
 
   def failure_result(message)
     Failure.new(message)
+  end
+
+  def validate_recipe
+    # This will be handled automatically by the after_save callback
+    # that generates the embedding, but we could force it here if needed
+    RecipeEmbeddingService.update_recipe_embedding(@recipe) if @recipe.embedding.blank?
+    
+    # We don't need to act on the validation results here,
+    # but they'll be available for the controller to use
   end
 end
 
